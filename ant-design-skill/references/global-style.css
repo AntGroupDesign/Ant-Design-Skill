@@ -1,0 +1,2337 @@
+/**
+ * Ant Design 设计系统全局样式 - Design Token CSS 变量定义
+ * 基于 Ant Design 语义化 Token 体系
+ * 使用方式：在项目入口文件或全局样式中引入此文件
+ *
+ * 结构：Reset → 共性 Token（颜色/字体/阴影/圆角/布局/间距/断点）→ 组件样式
+ *
+ * 设计原则：
+ * - 优先使用语义化变量（--color-primary、--font-size-sm 等），减少硬编码
+ * - 工具类通过 var() 引用 Token，与全局规范一致；模板优先内联样式或 var()，非必须
+ * - 组件样式覆盖（ant-table、ant-input 等）允许使用硬编码以匹配 antd 默认行为
+ * - 特殊场景（如 SVG icon 颜色、数值常量）允许硬编码，需在同处添加注释说明
+ *
+ * 字体规则：行高 = 字号 + 8px
+ * 间距规则：遵循 8x 原则，优先使用语义化变量
+ */
+
+/* ================================================================
+ * 全局 Reset
+ * 浏览器默认 body 有 8px margin，会让全屏布局外圈出现一圈白边；
+ * 中后台项目几乎都会希望 #root 撑满视口并继承画布背景。
+ * ================================================================ */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--nav-color-bg-canvas, #f7f8fa);
+}
+
+:root {
+    /* ============================================================
+     * 颜色
+     * ============================================================ */
+
+    /* Seed Token（种子变量） */
+    --color-primary: #1677ff;      /* 品牌色：主按钮、选中态、列表的操作列文本、表格的操作列文本 */
+    --color-success: #52c41a;     /* 成功色：成功提示 */
+    --color-warning: #faad14;     /* 警告色：警告提示 */
+    --color-error: #ff4d4f;       /* 错误色：错误提示 */
+    --color-link: #1677ff;        /* 链接色：链接文本、列表的操作列文本 */
+
+    /* Link 色系 */
+    --color-link-hover: #69b1ff;  /* 链接色：悬浮态 */
+    --color-link-active: #0958d9;  /* 链接色：激活态 */
+
+    /* Primary 色彩体系（浅→深渐变） */
+    --color-primary-bg: #e6f4ff;           /* Primary 浅色背景色 */
+    --color-primary-bg-hover: #bae0ff;     /* Primary 浅色背景悬浮态 */
+    --color-primary-border: #91caff;    /* Primary 描边色 */
+    --color-primary-border-hover: #69b1ff;       /* Primary 描边色悬浮态 */
+    --color-primary-hover: #4096ff;        /* Primary 悬浮态 */
+    --color-primary-active: #0958d9;       /* Primary 激活态 */
+    --color-primary-text: #1677ff;         /* Primary 文本默认态 */
+    --color-primary-text-hover: #4096ff;   /* Primary 文本悬浮态 */
+    --color-primary-text-active: #0958d9;  /* Primary 文本激活态 */
+    --color-info: #1677ff;               /* 信息色：进行中/处理中状态，与 Primary 一致 */
+
+    /* Success 色彩体系（浅→深渐变） */
+    --color-success-bg: #f6ffed;           /* Success 浅色背景色 */
+    --color-success-bg-hover: #d9f7be;      /* Success 浅色背景悬浮态 */
+    --color-success-border: #b7eb8f;     /* Success 描边色 */
+    --color-success-border-hover: #95de64;        /* Success 描边色悬浮态 */
+    --color-success-hover: #95de64;         /* Success 深色悬浮态 */
+    --color-success-active: #389e0d;        /* Success 深色激活态 */
+    --color-success-text: #52c41a;          /* Success 文本默认态 */
+    --color-success-text-hover: #73d13d;    /* Success 文本悬浮态 */
+    --color-success-text-active: #389e0d;   /* Success 文本激活态 */
+
+    /* Error 色彩体系（浅→深渐变） */
+    --color-error-bg: #fff2f0;             /* Error 浅色背景色 */
+    --color-error-bg-hover: #fff1f0;        /* Error 浅色背景悬浮态 */
+    --color-error-border: #ffccc7;       /* Error 描边色 */
+    --color-error-border-hover: #ffa39e;          /* Error 描边色悬浮态 */
+    --color-error-hover: #ff7875;           /* Error 深色悬浮态 */
+    --color-error-active: #d9363e;         /* Error 深色激活态 */
+    --color-error-text: #ff4d4f;            /* Error 文本默认态 */
+    --color-error-text-hover: #ff7875;      /* Error 文本悬浮态 */
+    --color-error-text-active: #d9363e;     /* Error 文本激活态 */
+
+    /* Warning 色彩体系（浅→深渐变） */
+    --color-warning-bg: #fffbe6;            /* Warning 浅色背景色 */
+    --color-warning-bg-hover: #fff1b8;       /* Warning 浅色背景悬浮态 */
+    --color-warning-border: #ffe58f;      /* Warning 描边色 */
+    --color-warning-border-hover: #ffd666;         /* Warning 描边色悬浮态 */
+    --color-warning-hover: #ffd666;         /* Warning 悬浮态 */
+    --color-warning-active: #d48806;        /* Warning 深色激活态 */
+    --color-warning-text: #faad14;          /* Warning 文本默认态 */
+    --color-warning-text-hover: #ffc53d;     /* Warning 文本悬浮态 */
+    --color-warning-text-active: #d48806;    /* Warning 文本激活态 */
+
+    /* 中性色 - 文本 */
+    --color-text: rgba(0, 0, 0, 0.88);           /* 一级文本色：文本默认色，例如列表的常规文本、表格列表项文本、表单文本等场景 */
+    --color-text-secondary: rgba(0, 0, 0, 0.65);  /* 二级文本色：用于不那么需要强化文本颜色的场景，例如 Label 文本、Menu 的文本选中态等场景。 */
+    --color-text-tertiary: rgba(0, 0, 0, 0.45);   /* 三级文本色：用于描述性文本，例如表单的中的补充说明文本。 */
+    --color-text-quaternary: rgba(0, 0, 0, 0.25);   /* 四级文本色：用于表单的输入提示文本色、禁用色文本等。 */
+
+    /* 中性色 - 边框 */
+    --color-border: #d9d9d9;              /* 一级边框色：默认边框颜色，用于分割不同的元素，例如：表单的分割线、卡片的分割线等。 */
+    --color-border-secondary: #f0f0f0;    /* 二级边框色：比默认使用的边框色要浅一级，此颜色和 colorSplit 的颜色一致。使用的是实色。 */
+
+    /* 中性色 - 填充 */
+    --color-fill: rgba(0, 0, 0, 0.15);            /* 一级填充色：最深的填充色，目前只用在 Slider 的 hover 效果。 */
+    --color-fill-secondary: rgba(0, 0, 0, 0.06);   /* 二级填充色：用于明显地勾勒出元素形体，如 Rate、Skeleton 等。也可以作为三级填充色的 Hover 状态，如 Table等。 */
+    --color-fill-tertiary: rgba(0, 0, 0, 0.04);   /* 三级填充色：用于勾勒出元素形体的场景，如 Slider、Segmented 等。如无强调需求的情况下，建议使用三级填色作为默认填色。 */
+    --color-fill-quaternary: rgba(0, 0, 0, 0.02); /* 四级填充色：最弱一级的填充色，适用于不易引起注意的色块，例如斑马纹、区分边界的色块等。 */
+
+    /* ============================================================
+     * 字体
+     * ============================================================ */
+    --font-zh: 'PingFang SC';                           /* 中文内容、列表的常规文本、表格列表项文本 */
+    --font-en: 'SF UI Text';                            /* 英文内容 */
+    --font-number: 'Helvetica Neue', Arial, sans-serif; /* 金额/指标等需位数对齐比较的数字；表格业务编号不适用 */
+    --font-code: 'Consolas', 'Courier New', monospace;  /* 技术标识：commit、缺陷 ID、API 路径等；工号/订单号等业务编号不适用 */
+    --font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji';  /* emoji 字体 */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', var(--font-zh), 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
+    /* 字号（行高统一按 字号 + 8px 计算） */
+    --font-size-xs: 12px;               /* 小号字体，行高 20px */
+    --font-size-sm: 14px;              /* 默认字号，行高 22px */
+    --font-size-lg: 16px;              /* 大号字体，行高 24px */
+    --font-size-xl: 20px;              /* 特大号字体，行高 28px */
+    --font-size-heading-1: 38px;        /* 一级标题，行高 46px */
+    --font-size-heading-2: 30px;       /* 二级标题，行高 38px */
+    --font-size-heading-3: 24px;       /* 三级标题，行高 32px */
+    --font-size-heading-4: 20px;       /* 四级标题，行高 28px */
+    --font-size-heading-5: 16px;       /* 五级标题，行高 24px */
+
+    /* 字重 */
+    --font-weight: 400;              /* 默认字重：正文、标签、表格内容、表单控件、列表的常规文本、列表的操作列文本、表格列表项文本、链接文本 */
+    --font-weight-secondary: 500;     /* 二级字重：标题、按钮文字、页面强调信息、tab文案选中态、列表的表头文本、表格的表头项文本 */
+    --font-weight-tertiary: 600;     /* 三级字重：页面级需要强调的信息 */
+
+    /* ============================================================
+     * 阴影
+     * ============================================================ */
+    --shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.018), 0 4px 12px -4px rgba(0, 0, 0, 0.026), 0 8px 20px -8px rgba(0, 0, 0, 0.018);
+    /* 基础阴影：除弹窗、气泡外的其他容器通用阴影，例如卡片等 */
+    --shadow-hover: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    /* 基础阴影悬浮态 */
+    --shadow-modal: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05), 0 12px 48px 16px rgba(0, 0, 0, 0.03);
+    /* 弹窗阴影：Modal */
+    --shadow-tooltip: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    /* 气泡阴影：Tooltip */
+
+    /* ============================================================
+     * 圆角
+     * ============================================================ */
+    --border-radius: 6px;    /* 基础圆角：常规按钮、输入框、下拉框、选择器 */
+    --border-radius-xs: 2px;  /* 超小圆角：组件高度 ≤ 8px 场景 */
+    --border-radius-sm: 4px;  /* 小号圆角：小号按钮、标签、多选框等 */
+    --border-radius-lg: 8px;  /* 大号圆角：卡片、悬浮框、模态弹窗等 */
+
+    /* ============================================================
+     * 布局（页面层级背景 / 表面）
+     * ============================================================ */
+    --color-bg-container: #ffffff;                /* 组件容器背景色：用于默认按钮、输入框组件容器背景色等。 */
+    --color-bg-elevated: #ffffff;                 /* 浮层容器背景色：用于模态框、弹出框、菜单等浮层容器背景色。 */
+    --color-bg-layout: #f5f5f5;                   /* 布局背景色：用于页面整体布局的背景色，只有需要在页面中处于B1的视觉层级时才会使用该token，其他用法都是错误的 */
+    --color-bg-spotlight: rgba(0, 0, 0, 0.85);   /* 引起注意的背景色：该色用于引起用户强烈关注注意的背景色，目前只用在Tooltip 的背景色上。 */
+    --color-bg-mask: rgba(0, 0, 0, 0.45);         /* 浮层的背景蒙层颜色：浮层的背景蒙层颜色，用于遮罩浮层下面的内容，Modal、Drawer 等组件的蒙层使用的是该 token */
+
+    /* ============================================================
+     * 间距（Margin / Padding）- 8x 原则
+     * ============================================================ */
+    /* 外边距 */
+    --margin-xxs: 4px;     /* 元素间最小间距 */
+    --margin-xs: 8px;      /* 图标与文字间距、表单项间距、按钮组间隙 */
+    --margin-sm: 12px;     /* 段落间距、列表项间距 */
+    --margin: 16px;        /* 卡片之间的栅格间隔、区块标准留白 */
+    --margin-md: 20px;     /* 较宽松的卡片间隔 */
+    --margin-lg: 24px;     /* 大组件组间隔 */
+    --margin-xl: 32px;     /* 页面布局的大区块留白 */
+    --margin-xxl: 48px;    /* 极端强调的空间分隔 */
+    /* 内边距 */
+    --padding-xxs: 4px;    /* 紧凑标签/徽章等小组件 */
+    --padding-xs: 8px;     /* 小号按钮/输入框默认内边距 */
+    --padding-sm: 12px;     /* 表格单元格默认内边距 */
+    --padding: 16px;       /* 垂直紧凑留白、按钮/输入框内边距；页面 Card 水平方向用 --nav-space-6 (24px) */
+    --padding-md: 20px;    /* 较宽松的卡片内容区 */
+    --padding-lg: 24px;    /* 大号组件、页面容器、抽屉内容 */
+    --padding-xl: 32px;    /* 顶部导航栏左右内边距 */
+
+    /* ============================================================
+     * 断点（响应式栅格）
+     * ============================================================ */
+    --screen-xs: 480px;   /* 超小屏幕：≥ 480px */
+    --screen-sm: 576px;   /* 小屏幕：≥ 576px */
+    --screen-md: 768px;   /* 中等屏幕：≥ 768px */
+    --screen-lg: 992px;   /* 大屏幕：≥ 992px */
+    --screen-xl: 1200px;  /* 超大屏幕：≥ 1200px */
+    --screen-xxl: 1600px; /* 超超大屏幕：≥ 1600px */
+  }
+
+/* ================================================================
+ * 模板工具类
+ * ================================================================ */
+
+.ds-text-main {
+  font-size: var(--font-size-sm);
+  line-height: calc(var(--font-size-sm) + 8px);
+  font-weight: var(--font-weight);
+  color: var(--color-text);
+}
+
+/* 页面壳层：默认大区块间距 16px */
+.ds-page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nav-space-4);
+}
+
+/* 页面标题区：继承 Content 的 24px 页面留白，不再叠加水平 padding */
+.ds-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  flex-wrap: wrap;
+  padding: 0;
+}
+
+.ds-page-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--nav-space-3);
+  flex-wrap: wrap;
+}
+
+.ds-page-title {
+  margin: 0;
+  color: var(--nav-color-text-active);
+}
+
+.ds-page-title-suffix {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.ds-page-header-with-breadcrumb {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nav-space-2);
+}
+
+.ds-page-breadcrumb,
+.ds-page-breadcrumb .ant-breadcrumb,
+.ds-page-breadcrumb ol {
+  margin: 0;
+  padding: 0;
+}
+
+.ds-page-breadcrumb .ant-breadcrumb-separator {
+  margin-inline: var(--nav-space-2);
+  color: var(--color-text-tertiary);
+}
+
+.ds-page-title-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+.ds-page-title-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--nav-space-3);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.ds-page-header-extra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--nav-space-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ProLayout / PageContainer 默认 pageContainer padding(40/32) 与本规范 24px 冲突，统一清零 */
+.ant-pro-layout-content,
+.ant-pro-page-container-children-container,
+.ant-pro-page-container-children-container-no-header,
+.ant-pro-page-container-warp-page-header,
+.ant-pro-page-container .ant-page-header {
+  padding-inline: 0 !important;
+}
+
+.ant-pro-layout-content,
+.ant-pro-page-container-children-container,
+.ant-pro-page-container-children-container-no-header {
+  padding-block: 0 !important;
+}
+
+.ant-pro-page-container-warp-page-header,
+.ant-pro-page-container .ant-page-header {
+  padding-block-start: 0 !important;
+  padding-block-end: 0 !important;
+}
+
+/* 页面级单行说明提示条（layout.md §页面说明提示条） */
+.ds-page-inline-alert.ant-alert {
+  padding: 8px 12px;
+  align-items: center;
+  min-height: 38px;
+}
+
+.ds-page-inline-alert .ant-alert-message {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ds-page-inline-alert .ant-alert-content {
+  min-width: 0;
+}
+
+.ds-page-inline-alert .ant-alert-icon {
+  align-self: center;
+}
+
+.ds-page-inline-alert .ant-alert-close-icon {
+  align-self: center;
+}
+
+
+/* ================================================================
+ * 组件样式区（Component Styles）
+ * 按组件分类：Component Token（:root）+ 样式覆盖
+ * ================================================================ */
+
+/* ----------------------------------------------------------------
+ * Navigation（导航布局）
+ * 与 layout.md 规范保持同步
+ * ---------------------------------------------------------------- */
+:root {
+  /* 品牌色 */
+  --nav-color-primary: var(--color-primary);
+  --nav-color-primary-bg: var(--color-primary-bg);
+
+  /* 选项态 */
+  --nav-color-option-active: var(--color-fill-tertiary);
+  --nav-color-option-selected: var(--color-primary-bg);
+  --nav-color-option-selected-text: var(--color-text);
+
+  /* 导航背景色 */
+  --nav-color-bg-canvas: #f7f8fa;
+
+  /* 容器色 */
+  --nav-color-surface: var(--color-bg-container);
+
+  /* 文本色 */
+  --nav-color-text: var(--color-text);
+  --nav-color-text-secondary: var(--color-text-secondary);
+  --nav-color-text-active: rgba(0, 0, 0, 0.85);
+  --nav-color-text-tertiary: var(--color-text-tertiary);
+
+  /* 边框色 */
+  --nav-color-border: var(--color-border);
+  --nav-color-border-light: var(--color-fill-secondary);
+
+  /* 侧边栏 */
+  --nav-color-sider: #f7f8fa;
+  --nav-color-sider-hover: var(--color-fill-tertiary);   /* 菜单项 hover 背景 */
+  --nav-color-sider-active: var(--nav-color-sider-hover); /* 菜单项选中背景，引用 hover，当前同色 */
+  --nav-color-sider-text: var(--color-text-secondary);
+  --nav-color-sider-text-active: rgba(0, 0, 0, 0.85);
+  --nav-color-sider-icon-active: var(--color-text-secondary);
+  --nav-color-sider-divider: var(--color-fill-secondary);
+
+  /* 层级 */
+  --nav-z-index-base: 1000;
+  --nav-z-index-trigger: 1001;
+  --chart-tooltip-z-index: 1060;
+  --nav-z-index-popup: 1100;
+
+  /* 阴影 & 动画 */
+  --nav-shadow-card: var(--shadow); /* 兼容旧变量；页面白色业务区块统一使用 --shadow */
+  --nav-shadow-card-hover: 0 2px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+  --nav-shadow-dropdown: 0 6px 16px rgba(0, 0, 0, 0.15);
+  --nav-transition: 0.24s cubic-bezier(0.2, 0, 0, 1);
+
+  /* 高度 & 间距 */
+  --nav-header-height: 56px;
+  --nav-space-1: var(--margin-xxs);
+  --nav-space-2: var(--margin-xs);
+  --nav-space-3: var(--margin-sm);
+  --nav-space-4: var(--margin);
+  --nav-space-5: var(--margin-md);
+  --nav-space-6: var(--padding-lg);
+  --nav-sider-width: 208px;
+  --nav-sider-collapsed-width: 64px;
+
+  /* 圆角 */
+  --nav-radius-sm: var(--border-radius);
+  --nav-radius-md: var(--border-radius-lg);
+  --nav-radius-pill: 16px;
+}
+
+/* ----------------------------------------------------------------
+ * Table（表格）
+ * ---------------------------------------------------------------- */
+:root {
+  --color-table-header-bg: #fafafa;           /* 表格表头背景色，无共性 Token 对应 */
+  --color-table-row-hover: #fafafa;           /* 表格行悬浮背景色 */
+  --color-table-action: var(--color-primary);             /* 操作列链接色 */
+  --color-table-action-hover: var(--color-link-hover);       /* 操作列链接悬浮色 */
+  --color-table-divider: var(--color-border);            /* 操作列竖线分隔色 */
+}
+
+/* 表头标题默认单行，列宽不足时优先调整列宽 / 横向滚动，而不是按字换行 */
+.ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell,
+.ant-table-wrapper .ant-table-thead > tr > th .ant-table-column-title {
+  white-space: nowrap;
+}
+
+/* Table 首末列左右 var(--nav-space-6)，与工具栏 / 列表页区块对齐（components_Table.md） */
+.ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:first-child,
+.ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:first-child {
+  padding-left: var(--nav-space-6) !important;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
+.ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child {
+  padding-right: var(--nav-space-6) !important;
+}
+
+/* 方案 B（默认）：卡片内容区承担外侧 24px，Table 首末列保留 16px 单元格可读留白 */
+.ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:first-child,
+.ds-list-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:first-child,
+.ds-list-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:first-child,
+.list-surface-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:first-child,
+.list-surface-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:first-child {
+  padding-left: var(--padding) !important;
+}
+
+.ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child,
+.ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
+.ds-table-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child,
+.ds-list-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
+.ds-list-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child,
+.list-surface-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
+.list-surface-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child {
+  padding-right: var(--padding) !important;
+}
+
+/* 操作列 / 批量提示条：link 按钮行高与正文对齐（22px） */
+.table-action-cell .ant-btn-link,
+.table-batch-alert-cell .ant-btn-link {
+  height: auto;
+  line-height: 22px;
+  padding-inline: 0;
+}
+
+/* 卡内顶部 Tab Strip：Tab 左侧，轻量筛选项 / 操作右侧同行 */
+.table-toolbar-with-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+/* 卡片内部标准工具栏：用于表格 / 列表卡内的标题、少量筛选项和操作按钮 */
+.ds-card-title-row,
+.ds-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+.ds-card-toolbar-inline {
+  flex-wrap: wrap;
+  row-gap: var(--nav-space-2);
+}
+
+.ds-card-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--nav-space-2);
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+/* 卡片内部顶部结果分类 Tab：仅用于表格 / 列表卡内的结果分类，固定 16 / 32 / 16 */
+.ds-card-tab-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  min-width: 0;
+  padding: var(--padding) 0;
+}
+
+.ds-card-tab-strip .toolbar-tabs {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ds-card-tab-strip .ds-card-toolbar-actions {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+
+.ds-card-tab-strip + .ant-table-wrapper,
+.ds-card-tab-strip + .ds-table-wrapper,
+.ds-card-tab-strip + .ant-list {
+  margin-top: 0 !important;
+}
+
+.ds-card-tab-strip .ant-tabs-nav {
+  margin: 0;
+}
+
+.ds-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-inline-start: var(--nav-space-1);
+  padding-inline: var(--nav-space-1);
+  border-radius: var(--nav-radius-pill);
+  background: var(--color-fill-secondary);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.ant-tabs-tab-active .ds-tab-count,
+.ds-card-tab-strip .ant-tabs-tab-active .ds-tab-count {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+}
+
+.ds-card-toolbar + .ant-table-wrapper,
+.ds-card-toolbar + .ds-table-wrapper,
+.ds-card-title-row + .ant-table-wrapper,
+.ds-card-title-row + .ds-table-wrapper {
+  margin-top: var(--padding);
+}
+
+/* 表格卡内部垂直节奏：卡片左右 24px 由壳层承担；卡内工具栏 / Table / 分页之间统一 16px */
+.ds-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+.ds-table-toolbar + .ant-table-wrapper,
+.ds-table-toolbar + .ds-table-wrapper {
+  margin-top: var(--padding);
+}
+
+.ds-table-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-block: var(--padding) 0;
+}
+
+.ds-table-card-padded .ant-table-pagination.ant-pagination,
+.ds-table-card .ant-table-pagination.ant-pagination {
+  margin-block: var(--padding) 0 !important;
+  margin-inline: 0 !important;
+}
+
+/* ----------------------------------------------------------------
+ * 页面内容 Card 默认留白（layout.md §页面内容水平对齐）
+ * ---------------------------------------------------------------- */
+
+.ds-page-card {
+  background: var(--color-bg-container);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding-block: var(--padding);
+  padding-inline: var(--nav-space-6);
+}
+
+.ant-card.ds-page-card,
+.ant-pro-card.ds-page-card,
+.ant-card.ds-table-card,
+.ant-pro-card.ds-table-card,
+.ant-card.ds-search-panel,
+.ant-pro-card.ds-search-panel,
+.ant-card.ds-list-card,
+.ant-pro-card.ds-list-card,
+.ant-card.ds-statistic-card,
+.ant-pro-card.ds-statistic-card {
+  border: 0 !important;
+  background: var(--color-bg-container);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.ant-card.ds-page-card,
+.ant-pro-card.ds-page-card,
+.ant-card.ds-table-card,
+.ant-pro-card.ds-table-card,
+.ant-card.ds-statistic-card,
+.ant-pro-card.ds-statistic-card {
+  padding: 0;
+}
+
+.ant-card.ds-page-card > .ant-card-head,
+.ant-card.ds-table-card > .ant-card-head,
+.ant-card.ds-statistic-card > .ant-card-head {
+  padding-inline: var(--nav-space-6) !important;
+}
+
+.ant-pro-card.ds-page-card > .ant-pro-card-header,
+.ant-pro-card.ds-table-card > .ant-pro-card-header,
+.ant-pro-card.ds-statistic-card > .ant-pro-card-header {
+  padding: var(--padding) var(--nav-space-6) 0 !important;
+}
+
+.ant-card.ds-page-card > .ant-card-body,
+.ant-card.ds-table-card > .ant-card-body,
+.ant-card.ds-statistic-card > .ant-card-body,
+.ant-pro-card.ds-page-card > .ant-pro-card-body,
+.ant-pro-card.ds-table-card > .ant-pro-card-body,
+.ant-pro-card.ds-statistic-card > .ant-pro-card-body {
+  padding: var(--padding) var(--nav-space-6) !important;
+}
+
+.ant-card.ds-list-card > .ant-card-body,
+.ant-card.list-surface-card > .ant-card-body,
+.ant-pro-card.ds-list-card > .ant-pro-card-body,
+.ant-pro-card.list-surface-card > .ant-pro-card-body {
+  padding: 0 !important;
+}
+
+/* 表格卡片快捷类（= ds-page-card + ds-table-card-padded，方案 B 默认） */
+.ds-table-card {
+  background: var(--color-bg-container);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding-block: var(--padding);
+  padding-inline: var(--nav-space-6);
+}
+
+/* 指标卡主数值：仅作用于 StatisticCard 直接子级指标，不影响 description 内嵌 Statistic。
+ * antd 小数会拆成 value-int / value-decimal，须一并设 28px，否则 99.4% 等会显得偏小。 */
+.ds-statistic-card {
+  background: var(--color-bg-container);
+  border: 0 !important;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding-block: var(--padding);
+  padding-inline: var(--nav-space-6);
+}
+
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-title {
+  margin-bottom: var(--nav-space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+}
+
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-content {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
+}
+
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-content-value,
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-content-value-int,
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-content-value-decimal {
+  color: var(--color-text-heading);
+  font-size: 28px !important;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.ds-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-content-suffix {
+  margin-left: var(--nav-space-1);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  line-height: 22px;
+}
+
+/* 同级指标卡：内容垂直居中；body 仍遵循页面级内容卡 16 / 24 padding（禁止用 minHeight 硬撑导致底留白过大） */
+.ds-statistic-card.ant-pro-statistic-card > .ant-pro-card-body {
+  display: flex;
+  align-items: center;
+  padding: var(--padding) var(--nav-space-6) !important;
+}
+
+.ds-statistic-card.ant-card > .ant-card-body {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: var(--padding) var(--nav-space-6) !important;
+}
+
+.ds-statistic-card.ant-pro-statistic-card > .ant-pro-card-body > .ant-pro-statistic-card-content {
+  width: 100%;
+}
+
+.ds-statistic-card.ant-pro-statistic-card .ant-pro-card-statistic {
+  width: 100%;
+  align-items: center;
+}
+
+/* description 内辅助指标：按 layout 区分，inline 禁止标题断行 */
+.ds-statistic-card .ant-pro-card-statistic-description .ant-pro-card-statistic-layout-inline {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  max-width: 100%;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-inline
+  .ant-statistic-title {
+  margin-bottom: 0;
+  margin-inline-end: 6px;
+  font-size: var(--font-size-xs);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  text-align: left;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-inline
+  .ant-statistic-content {
+  display: inline-flex;
+  width: auto;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-inline
+  .ant-statistic-content-value {
+  font-size: var(--font-size-sm) !important;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-vertical {
+  flex-shrink: 0;
+  width: auto;
+  min-width: max-content;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-vertical
+  .ant-pro-card-statistic-wrapper {
+  width: auto;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-vertical
+  .ant-statistic-title {
+  margin-bottom: var(--nav-space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-vertical
+  .ant-statistic-content {
+  display: block;
+  width: auto;
+  text-align: left;
+}
+
+.ds-statistic-card
+  .ant-pro-card-statistic-description
+  .ant-pro-card-statistic-layout-vertical
+  .ant-statistic-content-value {
+  font-size: 20px !important;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--color-text-secondary);
+}
+
+.ds-statistic-card .ant-pro-card-statistic-description .ant-space {
+  flex-wrap: nowrap;
+}
+
+/* 基础指标卡：数值区与内嵌迷你图表左缘对齐 */
+.ds-statistic-card .ant-pro-statistic-card-content {
+  width: 100%;
+}
+
+.ds-statistic-card .ant-pro-statistic-card-content > .ant-pro-card-statistic {
+  width: 100%;
+}
+
+.ds-statistic-card .ant-pro-statistic-card-chart {
+  width: 100%;
+  margin-inline: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ds-statistic-mini-chart {
+  display: block;
+  width: 100%;
+  margin-inline: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ds-statistic-mini-chart canvas,
+.ds-statistic-mini-chart svg,
+.ds-statistic-mini-chart img {
+  display: block;
+  max-width: 100%;
+}
+
+.ds-statistic-card .ant-pro-statistic-card-chart img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-position: left top;
+}
+
+/* 总分指标卡：总值与每个分值都是同级单元，必须等分并防止长金额撑出卡片 */
+.ds-statistic-card.ds-total-statistic-card,
+.ds-total-statistic-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding-inline: 0;
+  overflow: hidden;
+}
+
+.ds-total-statistic-grid {
+  box-sizing: border-box;
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ds-total-statistic-cell {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ds-total-statistic-title,
+.ds-total-statistic-description,
+.ds-total-statistic-value {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.ds-total-statistic-title,
+.ds-total-statistic-description,
+.ds-total-statistic-value {
+  white-space: nowrap;
+}
+
+.ds-total-statistic-title {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.ds-total-statistic-value {
+  color: var(--color-text-heading);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.ds-total-statistic-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 22px;
+}
+
+/* 页签联动指标卡：active 只用底部 ink bar 表达，禁止整块卡片选中底色 */
+.ant-pro-card.ds-statistic-tabs > .ant-pro-card-body {
+  padding: var(--padding) 0 0 !important;
+}
+
+.ds-statistic-tabs .ant-tabs-nav {
+  margin: 0 !important;
+}
+
+.ds-statistic-tabs .ant-tabs-nav::before {
+  border-bottom: 0 !important;
+}
+
+.ds-statistic-tabs .ant-tabs-content-holder {
+  display: none;
+}
+
+.ds-statistic-tabs .ant-tabs-nav-wrap,
+.ds-statistic-tabs .ant-tabs-nav-list {
+  width: 100%;
+}
+
+.ds-statistic-tabs .ant-tabs-nav-list {
+  display: flex;
+}
+
+.ds-statistic-tabs .ant-tabs-tab,
+.ds-statistic-tabs .ant-tabs-tab-active {
+  background: transparent !important;
+  box-shadow: none !important;
+  flex: 1 1 0 !important;
+  margin-inline-end: 0 !important;
+  padding-inline: 0 !important;
+}
+
+.ds-statistic-tabs .ant-tabs-tab-btn {
+  width: 100%;
+  overflow: visible;
+}
+
+.ds-statistic-tabs .ant-tabs-ink-bar {
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 0;
+}
+
+/* Tab 等分均分：每个 Tab 宽度一致，不因数值长短差异导致宽窄不一 */
+.ds-statistic-tabs .ds-statistic-tab-label {
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--padding);
+  padding-block-end: var(--padding);
+  position: relative;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-status-dot {
+  position: absolute;
+  top: 6px;
+  left: calc(var(--padding) - 12px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label-total {
+  border-inline-end: 0;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label-total::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border-secondary);
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label .ant-pro-card-statistic {
+  width: 100% !important;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label .ant-pro-card-statistic-wrapper {
+  column-gap: var(--margin-xs);
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label .ant-pro-card-statistic-content {
+  min-width: 0;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label .ant-statistic-content {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-label .ant-pro-card-statistic-description {
+  margin-top: var(--nav-space-2);
+  text-align: left;
+}
+
+.ds-statistic-tabs .ds-statistic-tab-status-tag {
+  margin-inline-end: 0;
+}
+
+.ds-statistic-linked-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+.ds-statistic-linked-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--nav-space-4);
+  min-width: 0;
+}
+
+.ant-pro-card.ds-statistic-linked-panel {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.ant-pro-card.ds-statistic-linked-panel > .ant-pro-card-body {
+  padding: var(--padding) var(--nav-space-6) var(--nav-space-6) !important;
+}
+
+.ds-statistic-linked-panel-title {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 22px;
+}
+
+/* ----------------------------------------------------------------
+ * List（列表）
+ * ---------------------------------------------------------------- */
+
+/* 列表卡（方案 B 默认）：与表格卡共用水平 24px、内部 16px 节奏；壳层承担水平 24px，内部只保留垂直 padding */
+.ds-list-card,
+.list-surface-card {
+  background: var(--color-bg-container);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding-block: 0;
+  padding-inline: var(--nav-space-6);
+}
+
+/* 搜索卡（查询列表 / 看板筛选区）：AntD Card 须把 padding 打到 body 内容层 */
+.ds-page-panel.ds-search-panel:not(.ant-card):not(.ant-pro-card),
+.ds-search-panel:not(.ant-card):not(.ant-pro-card) {
+  background: var(--color-bg-container);
+  border: 0;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--nav-space-5) var(--nav-space-6);
+}
+
+.ant-card.ds-search-panel > .ant-card-body,
+.ant-pro-card.ds-search-panel > .ant-pro-card-body {
+  padding: var(--nav-space-5) var(--nav-space-6) !important;
+}
+
+.ds-page-panel.ds-search-panel:not(.ant-card):not(.ant-pro-card):has(.ds-search-tabs-row),
+.ds-search-panel:not(.ant-card):not(.ant-pro-card):has(.ds-search-tabs-row) {
+  padding-bottom: 0;
+}
+
+.ant-card.ds-search-panel:has(.ds-search-tabs-row) > .ant-card-body,
+.ant-pro-card.ds-search-panel:has(.ds-search-tabs-row) > .ant-pro-card-body {
+  padding-bottom: 0 !important;
+}
+
+.ds-page-panel.ds-search-panel:not(.ant-card):not(.ant-pro-card):has(.ds-search-advanced-filter),
+.ds-search-panel:not(.ant-card):not(.ant-pro-card):has(.ds-search-advanced-filter) {
+  padding-bottom: var(--nav-space-5);
+}
+
+.ant-card.ds-search-panel:has(.ds-search-advanced-filter) > .ant-card-body,
+.ant-pro-card.ds-search-panel:has(.ds-search-advanced-filter) > .ant-pro-card-body {
+  padding-bottom: var(--nav-space-5) !important;
+}
+
+
+/* 搜索卡内 Tab：下划线选中态 + 底部分割线（14px，非胶囊） */
+.ds-search-tabs-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: var(--nav-space-4);
+  gap: var(--nav-space-3);
+  flex-wrap: wrap;
+}
+
+.ds-search-tabs {
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-search-tabs .ant-tabs-nav {
+  margin-bottom: 0;
+}
+
+.ds-search-tabs .ant-tabs-tab {
+  padding: 0 0 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ds-search-tabs .ant-tabs-tab + .ant-tabs-tab {
+  margin-left: var(--nav-space-6);
+}
+
+.ds-search-tabs .ant-tabs-tab-btn {
+  color: var(--color-text);
+  font-weight: 400;
+  transition: color 0.2s;
+}
+
+.ds-search-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.ds-search-tabs .ant-tabs-tab-disabled .ant-tabs-tab-btn {
+  color: var(--color-text-quaternary);
+}
+
+.ds-search-tabs .ant-tabs-ink-bar {
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+.ds-search-tabs .ant-tabs-nav::before {
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.ds-search-advanced-filter-btn.ant-btn-link {
+  padding-inline: 0;
+  padding-bottom: 10px;
+  height: auto;
+  line-height: 22px;
+  flex-shrink: 0;
+}
+
+/* 方案 B：壳层已承担水平留白，列表条目禁止叠加 padding-inline */
+.ds-list-card .ant-list-item,
+.list-surface-card .ant-list-item {
+  padding-inline: 0 !important;
+}
+
+/* 图文列表右侧 media / extra：图片相对整条列表项垂直居中，尺寸由内层图盒固定 */
+.ds-list-item-media {
+  align-self: stretch;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ds-list-item-media-box {
+  overflow: hidden;
+  border-radius: var(--nav-radius-md);
+  background: var(--nav-color-primary-bg);
+}
+
+.ds-list-item-media-box .ant-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ds-list-item-media-box img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 列表壳层已承担水平留白时，去掉 Ant List Header 默认 padding，避免叠加 */
+.ds-list-card .ant-list-header,
+.list-surface-card .ant-list-header {
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
+/* Header 内容只保留上下 16px，左右由列表壳层统一承担 */
+.ds-list-card .ant-list-header > div:not(.select-all-row),
+.list-surface-card .ant-list-header > div:not(.select-all-row) {
+  padding: 16px 0 !important;
+}
+
+.ds-list-card .ant-list-header > .ds-card-tab-strip,
+.list-surface-card .ant-list-header > .ds-card-tab-strip {
+  padding: var(--padding) 0 var(--nav-space-2) !important;
+}
+
+/* Selectable list: select all row - 12px top and bottom */
+.select-all-row {
+  padding: 12px 0 !important;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+/* Toolbar header: remove left/right padding */
+.toolbar-header {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.list-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nav-space-4);
+  padding: var(--padding) 0 0;
+}
+
+.list-card-toolbar + .ant-list,
+.list-card-toolbar + .ds-list-content,
+.list-card-toolbar + .ds-list-table {
+  margin-top: var(--padding);
+}
+
+.list-card-title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--nav-space-2);
+  min-width: 0;
+  color: var(--nav-color-text-active);
+  font-size: var(--font-size-heading-5);
+  font-weight: var(--font-weight-secondary);
+  line-height: 24px;
+}
+
+.list-card-title-meta {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+}
+
+.ds-list-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--padding) 0;
+}
+
+.ds-list-bottom-spacer {
+  height: var(--padding);
+}
+
+.ant-list.ds-list-card:not(:has(.ant-list-footer)) {
+  padding-block-end: var(--padding);
+}
+
+.ant-list.ds-list-card .ant-list-footer,
+.ds-list-card .ant-list-footer {
+  border-top: 0 !important;
+  padding: 0 !important;
+}
+
+/* List item divider: content-width only */
+.list-item-hover:not(:last-child) {
+  border-bottom: none !important;
+}
+
+/* Hover background block: 8px overflow left/right, 8px top-radius, no bottom-radius */
+.list-item-hover {
+  background: transparent;
+  transition: background 0.2s ease;
+  margin-inline: 0 !important;
+  position: relative;
+}
+
+/* 旧列表壳层已承担水平留白时，列表项 padding 保持中性；其他列表模板由条目自身承担 24px */
+.ds-list-card .list-item-hover,
+.list-surface-card .list-item-hover {
+  padding-inline: 0 !important;
+}
+
+.list-item-hover:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: var(--nav-space-6);
+  bottom: 0;
+  left: var(--nav-space-6);
+  height: 1px;
+  background: var(--color-border-secondary);
+  pointer-events: none;
+}
+
+.ds-list-card .list-item-hover:not(:last-child)::after,
+.list-surface-card .list-item-hover:not(:last-child)::after {
+  right: 0;
+  left: 0;
+}
+
+.list-item-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius-lg);
+  background: var(--color-fill-tertiary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  margin-inline: -8px;
+  pointer-events: none;
+}
+
+.list-item-hover:hover::before {
+  opacity: 1;
+}
+
+/* 列表进度条文字颜色统一 */
+.list-item-hover .ant-progress-text {
+  color: var(--color-text) !important;
+}
+
+/* 列表进度条移除成功状态图标 */
+.list-item-hover .ant-progress-status-success .ant-progress-icon {
+  display: none !important;
+}
+
+/* 文字链接按钮（List Text Button） */
+.list-text-btn {
+  padding: 0 !important;
+  color: var(--color-primary) !important;
+  background: transparent !important;
+}
+
+.list-text-btn:hover {
+  color: color-mix(in srgb, var(--color-primary) 65%, transparent) !important;
+  background: transparent !important;
+}
+
+.list-text-btn:active {
+  background: transparent !important;
+}
+
+/* Hide ant-list-item-action elements with ant-li class */
+.list-item-hover .ant-list-item-action .ant-li {
+  display: none !important;
+}
+
+/* 操作栏容器：无间距 */
+.list-item-hover .ant-list-item-action {
+  display: flex !important;
+  gap: 16px !important;
+  margin-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+  list-style: none !important;
+}
+
+.list-item-hover .ant-list-item-action > li {
+  padding-inline-start: 0 !important;
+  padding-inline-end: 0 !important;
+  margin-inline-start: 0 !important;
+  margin-inline-end: 0 !important;
+}
+
+/* 操作栏按钮之间的分割线隐藏 */
+.list-item-hover .ant-list-item-action-split {
+  display: none !important;
+}
+
+/* 编辑列表 - 描述输入框默认高度2行 */
+.edit-desc-textarea.ant-input,
+.edit-desc-textarea {
+  height: 64px !important;
+  min-height: 64px !important;
+  resize: vertical !important;
+}
+
+.edit-desc-textarea textarea {
+  height: 64px !important;
+  min-height: 64px !important;
+  resize: vertical !important;
+  line-height: 1.5714 !important;
+}
+
+/* ----------------------------------------------------------------
+ * Toolbar（Table / List / Nav 搜索框：Input · Tabs）
+ * ---------------------------------------------------------------- */
+
+/* Search wrapper - flex to align search input with buttons/selects */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.search-wrapper .ant-input-affix-wrapper {
+  height: 32px !important;
+  padding: 0 11px !important;
+  align-items: center;
+}
+
+.search-wrapper .ant-input-affix-wrapper > .ant-input,
+.search-wrapper .ant-input-affix-wrapper > input.ant-input {
+  height: auto !important;
+  line-height: normal !important;
+  padding: 0 !important;
+}
+
+/* Nav Search：仅用于顶部/全局导航，弱底 filled 样式 */
+.nav-search.ant-input-affix-wrapper {
+  height: 32px;
+  border-color: transparent;
+  border-radius: var(--nav-radius-md);
+  background: var(--color-fill-tertiary);
+  box-shadow: none;
+  width: 220px;
+}
+
+.nav-search.ant-input-affix-wrapper:hover,
+.nav-search.ant-input-affix-wrapper:focus-within,
+.nav-search.ant-input-affix-wrapper-focused {
+  border-color: transparent;
+  background: var(--color-fill-secondary);
+  box-shadow: none;
+}
+
+/* Filter Search：用于表格/列表/搜索卡筛选区，必须与 Select / DatePicker 等控件保持线框样式 */
+.table-filter-search.ant-input-affix-wrapper,
+.operator-search-input.ant-input-affix-wrapper {
+  height: 32px;
+  border-color: var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-bg-container);
+  box-shadow: none;
+}
+
+.operator-search-input {
+  flex: 1 1 420px;
+  min-width: 280px;
+}
+
+.table-filter-search.ant-input-affix-wrapper:hover,
+.table-filter-search.ant-input-affix-wrapper:focus-within,
+.table-filter-search.ant-input-affix-wrapper-focused,
+.operator-search-input.ant-input-affix-wrapper:hover,
+.operator-search-input.ant-input-affix-wrapper:focus-within,
+.operator-search-input.ant-input-affix-wrapper-focused {
+  border-color: var(--color-primary-border-hover);
+  background: var(--color-bg-container);
+}
+
+.nav-search .ant-input,
+.table-filter-search .ant-input,
+.operator-search-input .ant-input {
+  background: transparent;
+}
+
+.nav-search .ant-input-prefix,
+.table-filter-search .ant-input-prefix,
+.operator-search-input .ant-input-prefix {
+  color: var(--nav-color-text-tertiary);
+  margin-inline-end: var(--nav-space-2);
+}
+
+@media (max-width: 1120px) {
+  .nav-search.ant-input-affix-wrapper {
+    width: 180px;
+  }
+}
+
+/* Tab 标签（Toolbar Tabs） */
+
+/*
+ * ProTable 卡内顶部结果分类 Tab（对齐 components_Table.md §卡内顶部 Tab Strip）
+ * - 方案 B（默认）：外层 ds-page-card / ds-table-card 已 padding-inline 24px，工具栏不再叠加
+ * - ProTable ListToolBar 默认 padding-block: 16px 会叠加成 32px，须去掉顶部重复值
+ * - 结果分类 Tab 固定 16 / 32 / 16，无底线、无 ink-bar
+ */
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar-container {
+  padding-block-start: 0 !important;
+  padding-block-end: var(--padding) !important;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar-right {
+  flex-wrap: nowrap;
+}
+
+.ds-table-card-with-tabs:not(.ds-page-card):not(.ds-table-card):not(.ds-table-card-padded)
+  .ant-pro-table-list-toolbar-container {
+  padding-inline: var(--nav-space-6) !important;
+}
+
+.ds-table-card-with-tabs .ant-pro-card-body {
+  padding: 0 !important;
+}
+
+.ds-table-card-with-tabs .ant-table-pagination.ant-pagination {
+  margin-block: var(--padding) var(--padding) !important;
+  margin-inline: 0 !important;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-top > .ant-tabs-nav,
+.toolbar-tabs .ant-tabs-nav {
+  height: 32px;
+  margin: 0;
+  margin-block-end: 0;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-nav-list,
+.toolbar-tabs .ant-tabs-nav-list {
+  align-items: center;
+  height: 32px;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-nav::before,
+.toolbar-tabs .ant-tabs-nav::before {
+  display: none;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-tab,
+.toolbar-tabs .ant-tabs-tab {
+  height: 32px;
+  padding: 5px 0;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-tab + .ant-tabs-tab,
+.toolbar-tabs .ant-tabs-tab + .ant-tabs-tab {
+  margin-left: var(--nav-space-6);
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-ink-bar,
+.toolbar-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-tab .ant-tabs-tab-btn,
+.toolbar-tabs .ant-tabs-tab .ant-tabs-tab-btn {
+  font-size: 16px !important;
+  line-height: 22px;
+}
+
+.ds-table-card-with-tabs .ant-pro-table-list-toolbar .ant-tabs-tab-active .ant-tabs-tab-btn,
+.toolbar-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-primary) !important;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+ * Descriptions（描述列表）
+ * ---------------------------------------------------------------- */
+:root {
+  --color-bg-card-inner: var(--color-fill-tertiary); /* 描述列表长文本/代码块内嵌灰底 */
+}
+
+.ds-descriptions .ant-descriptions-item-label {
+  white-space: nowrap;
+  min-width: 88px;
+}
+
+.db-descriptions-value-row {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--margin-xs);
+  max-width: 100%;
+}
+
+.db-descriptions-long-text {
+  display: block;
+  max-width: 100%;
+  background: var(--color-bg-card-inner);
+  border-radius: var(--border-radius);
+  padding: var(--padding-xs) var(--padding-sm);
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.db-descriptions-long-text .db-descriptions-action-icon.ant-btn {
+  margin-inline-start: var(--margin-xs);
+  vertical-align: baseline;
+}
+
+.db-descriptions-action-icon.ant-btn {
+  color: var(--color-text-tertiary);
+}
+
+.db-descriptions-action-icon.ant-btn:hover {
+  color: var(--color-info) !important;
+}
+
+/* ----------------------------------------------------------------
+ * Card List（卡片列表）
+ * ---------------------------------------------------------------- */
+
+/* 卡片默认态：描边样式 */
+.card-item {
+  border: 1px solid var(--color-border-secondary) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+  cursor: pointer;
+  position: relative;
+  min-width: 300px;
+}
+
+.ant-card.card-item > .ant-card-body,
+.ant-pro-card.card-item > .ant-pro-card-body {
+  padding: var(--padding) var(--nav-space-6) !important;
+}
+
+/* 卡片 Hover 态：浮起 + 极轻投影（保持默认描边，不用主题色） */
+.card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--nav-shadow-card-hover) !important;
+}
+
+/* 卡片选中态：伪元素边框 + 背景色（避免圆角裁剪） */
+.card-item.card-selected {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent) !important;
+  transform: none;
+  box-shadow: none !important;
+  border-radius: 8px;
+}
+
+.card-item.card-selected::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--color-primary);
+  pointer-events: none;
+}
+
+.card-item.card-selected:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--nav-shadow-card-hover) !important;
+}
+
+/* 选中卡片内容区背景色 */
+.card-item.card-selected .ant-card-body {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent) !important;
+  border-radius: 8px;
+}
+
+/* 卡片内操作按钮容器间距 16px */
+.card-item .card-action-btns {
+  gap: 16px;
+}
+
+/* 卡片 body 上下左右 padding 均为 20px；禁止通过单独增大 padding-top / padding-bottom 为业务内容让位 */
+.card-item .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px !important;
+}
+
+/* 卡片内 Meta 区域：头像、标题、标签间距 8px */
+.card-item .ant-list-item-meta {
+  gap: 8px;
+}
+
+/* 卡片内描述与内容间距 */
+.card-item .ant-list-item-meta-content {
+  gap: 4px;
+}
+
+/* ----------------------------------------------------------------
+ * Form（表单）
+ * 对应 Ant Design ConfigProvider components.Form Component Token
+ * ---------------------------------------------------------------- */
+:root {
+  --form-inline-item-margin-bottom: 0;                 /* inlineItemMarginBottom */
+  --form-item-margin-bottom: 24px;                     /* itemMarginBottom */
+  --form-label-colon-margin-inline-end: 8px;           /* labelColonMarginInlineEnd */
+  --form-label-colon-margin-inline-start: 2px;         /* labelColonMarginInlineStart */
+  --form-label-color: var(--color-text);               /* labelColor，rgba(0, 0, 0, 0.88) */
+  --form-label-font-size: var(--font-size-sm);         /* labelFontSize，14px */
+  --form-label-height: 32px;                           /* labelHeight */
+  --form-label-required-mark-color: var(--color-error); /* labelRequiredMarkColor，#ff4d4f */
+  --form-vertical-label-margin: 0;                     /* verticalLabelMargin */
+  --form-vertical-label-padding: 0 0 8px;              /* verticalLabelPadding */
+  --form-drawer-content-padding-inline: var(--padding-lg); /* 抽屉内容区左右内边距，24px */
+  --space-xxxl: 64px;            /* 竖向分步表单步骤条高度 / 侧边栏一级菜单高度 */
+}
+
+/* TextArea showCount：计数属于控件附属信息，收进输入框内部，避免挤占下一项 label 间距 */
+.ant-input-textarea-show-count {
+  position: relative;
+}
+
+.ant-input-textarea-show-count > textarea.ant-input {
+  min-height: 76px;
+  padding-bottom: 28px !important;
+}
+
+.ant-input-textarea-show-count .ant-input-data-count {
+  inset-inline-end: 32px !important;
+  bottom: 6px !important;
+  font-size: var(--font-size-xs);
+  line-height: calc(var(--font-size-xs) + 8px);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.ds-form-modal textarea.ant-input {
+  resize: none;
+}
+
+.ds-form-modal .ant-input-textarea-show-count .ant-input-data-count {
+  inset-inline-end: 12px !important;
+}
+
+/* ========== 横向分步表单样式覆盖 ========== */
+
+.steps-form-page-card {
+  padding-block: 0;
+}
+
+.ant-card.steps-form-page-card > .ant-card-body,
+.ant-pro-card.steps-form-page-card > .ant-pro-card-body {
+  padding-block: 0 !important;
+}
+
+.horizontal-steps-form {
+  display: flex;
+  justify-content: center;
+  padding-block: 48px;
+  padding-inline: 0;
+}
+
+.horizontal-steps-form-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* 步骤条与表单内容间距调整为 40px */
+.horizontal-steps-form .ant-pro-steps-form-steps {
+  margin-bottom: 40px !important;
+}
+
+/* 步骤宽度固定 307px，步骤间距左边 16px，最后一个步骤自适应 */
+.horizontal-steps-form .ant-steps .ant-steps-item {
+  flex: none !important;
+  padding-inline-start: 16px !important;
+  padding-inline-end: 0 !important;
+  width: 307px !important;
+}
+
+.horizontal-steps-form .ant-steps .ant-steps-item:last-child {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+.horizontal-steps-form .ant-steps .ant-steps-item:first-child {
+  padding-inline-start: 0 !important;
+}
+
+/* 步骤条标题右侧间距 16px */
+.horizontal-steps-form .ant-steps .ant-steps-item-title {
+  padding-inline-end: 16px !important;
+}
+
+/* 连接线：宽度 = 步骤宽度 - 左边距 - 标题右边距 */
+.horizontal-steps-form .ant-steps .ant-steps-item:not(:last-child) .ant-steps-item-tail {
+  width: calc(307px - 16px - 8px) !important;
+}
+
+.horizontal-steps-form .ant-steps .ant-steps-item:last-child .ant-steps-item-tail {
+  display: none !important;
+}
+
+/* 步骤条水平居中对齐 */
+.horizontal-steps-form .ant-pro-steps-form-steps {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.horizontal-steps-form .ant-steps {
+  justify-content: center !important;
+}
+
+/* 表单内容水平居中对齐 */
+.horizontal-steps-form .ant-pro-steps-form-stepFormBody {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.horizontal-steps-form .ant-pro-steps-form-stepFormBody .ant-form {
+  width: 100% !important;
+  max-width: 600px !important;
+}
+
+/* 横向分步表单：控件宽度与 ProForm md(328px) / xl(552px) 档位对齐 */
+.horizontal-steps-form .ant-input:not(textarea):not(.ant-input-number-input) {
+  width: 328px !important;
+  height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  line-height: 22px;
+}
+
+.horizontal-steps-form .ant-input-affix-wrapper {
+  width: 328px !important;
+  height: 32px;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.horizontal-steps-form .ant-input-affix-wrapper > input.ant-input {
+  height: 22px;
+  line-height: 22px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.horizontal-steps-form .ant-select {
+  width: 328px !important;
+}
+
+.horizontal-steps-form .ant-select-single .ant-select-selector {
+  width: 328px !important;
+  height: 32px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.horizontal-steps-form .ant-picker {
+  width: 328px !important;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.horizontal-steps-form .ant-picker-input > input {
+  height: 22px;
+  line-height: 22px;
+}
+
+.horizontal-steps-form textarea.ant-input {
+  width: 552px !important;
+  min-height: 76px;
+  resize: vertical;
+}
+
+.horizontal-steps-form .ant-form-item-control-input-content:has(textarea) {
+  max-width: 552px !important;
+}
+
+.horizontal-steps-form .ant-form-item-control-input-content:not(:has(textarea)) {
+  max-width: 328px !important;
+}
+
+/* Checkbox：勾选框与多行文案顶对齐 */
+.horizontal-steps-form .ant-checkbox-wrapper {
+  align-items: flex-start !important;
+}
+
+.horizontal-steps-form .ant-checkbox {
+  align-self: flex-start !important;
+  margin-top: 3px;
+}
+
+.horizontal-steps-form .ant-checkbox + span {
+  line-height: 22px;
+}
+
+.horizontal-steps-form .ant-pro-steps-form .ant-form-item {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.horizontal-steps-form .ant-pro-steps-form .ant-form-item-label {
+  width: 100% !important;
+}
+
+.horizontal-steps-form .ant-pro-steps-form .ant-form-item-control {
+  width: 100% !important;
+  flex: none !important;
+}
+
+/* ========== 竖向分步表单样式覆盖 ========== */
+
+.vertical-steps-form {
+  padding-block: 48px;
+  padding-inline: 0;
+}
+
+.vertical-steps-form .vertical-steps-form-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 48px;
+  min-height: 480px;
+}
+
+.vertical-steps-form .vertical-steps-form-steps {
+  flex: 0 0 240px;
+  width: 240px;
+  padding-top: 0;
+}
+
+.vertical-steps-form .ant-pro-steps-form-steps-container {
+  max-width: none !important;
+}
+
+.vertical-steps-form .ant-steps {
+  gap: 0 !important;
+  row-gap: 0 !important;
+}
+
+.vertical-steps-form .ant-steps-item-title {
+  font-size: var(--font-size-lg);
+  line-height: 24px;
+}
+
+.vertical-steps-form .ant-steps-item-description {
+  font-size: var(--font-size-sm);
+  line-height: 22px;
+  max-width: 180px;
+}
+
+.vertical-steps-form .ant-steps-item {
+  height: auto;
+  min-height: 88px;
+  margin-bottom: 0;
+  padding-bottom: var(--padding-sm);
+}
+
+.vertical-steps-form .ant-steps-item-container {
+  min-height: inherit;
+  position: relative;
+}
+
+.vertical-steps-form .ant-steps-item-content {
+  padding-top: 0 !important;
+}
+
+.vertical-steps-form .ant-steps-item-icon {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 30px !important;
+  margin-inline-end: var(--padding) !important;
+}
+
+.vertical-steps-form .ant-steps-item-process .ant-steps-item-icon {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.vertical-steps-form .ant-steps-item-process .ant-steps-icon {
+  color: var(--color-bg-container) !important;
+  line-height: 30px !important;
+}
+
+.vertical-steps-form .ant-steps-item-finish .ant-steps-item-icon {
+  background: var(--color-primary-bg) !important;
+  border-color: var(--color-primary-bg) !important;
+}
+
+.vertical-steps-form .ant-steps-item-finish .ant-steps-icon {
+  color: var(--color-primary) !important;
+  line-height: 30px !important;
+}
+
+.vertical-steps-form .ant-steps-item-wait .ant-steps-item-icon {
+  background: var(--color-fill-tertiary) !important;
+  border-color: var(--color-fill-tertiary) !important;
+}
+
+.vertical-steps-form .ant-steps-item-wait .ant-steps-icon {
+  color: var(--color-text-tertiary) !important;
+  line-height: 30px !important;
+}
+
+.vertical-steps-form .ant-steps-item:last-child {
+  margin-bottom: 0;
+  height: auto;
+  min-height: auto;
+  padding-bottom: 0;
+}
+
+.vertical-steps-form .ant-steps-item-tail {
+  inset-inline-start: 16px !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+  padding: 40px 0 8px !important;
+  box-sizing: border-box;
+}
+
+.vertical-steps-form .ant-steps-item-tail::after {
+  width: 1px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.vertical-steps-form .ant-steps-item-finish .ant-steps-item-tail::after {
+  background-color: var(--color-primary) !important;
+}
+
+.vertical-steps-form .vertical-steps-form-content {
+  width: 520px;
+  padding-top: 0;
+}
+
+.vertical-steps-form .ant-pro-steps-form-container {
+  width: 100%;
+  max-width: none !important;
+}
+
+.vertical-steps-form .ant-pro-steps-form-stepForm {
+  margin-top: 0 !important;
+}
+
+.vertical-steps-form .ant-pro-steps-form-stepFormBody,
+.vertical-steps-form .ant-form {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.vertical-steps-form .vertical-steps-form-content > :first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm > :first-child,
+.vertical-steps-form .ant-pro-steps-form-stepFormBody > :first-child,
+.vertical-steps-form .ant-form > :first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h1:first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h2:first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h3:first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h4:first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h5:first-child,
+.vertical-steps-form .ant-pro-steps-form-stepForm h6:first-child {
+  margin-top: 0 !important;
+}
+
+.vertical-steps-form .ant-form > .ant-form-item:first-child,
+.vertical-steps-form .ant-form > .ant-form-item:first-child .ant-form-item-label {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.vertical-steps-form .ant-form-item {
+  margin-bottom: var(--form-item-margin-bottom, 24px);
+}
+
+.vertical-steps-form .ant-form .ant-input:not(textarea):not(.ant-input-number-input) {
+  width: 420px;
+  height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  line-height: 22px;
+}
+
+.vertical-steps-form .ant-form .ant-input-number {
+  width: 420px;
+  height: 32px;
+}
+
+.vertical-steps-form .ant-form .ant-picker {
+  width: 420px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.vertical-steps-form .ant-form .ant-select-single .ant-select-selector {
+  width: 420px !important;
+  height: 32px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.vertical-steps-form .ant-form .ant-btn {
+  height: 32px;
+}
+
+.vertical-steps-form .ant-form .ant-input-affix-wrapper {
+  width: 420px;
+  height: 32px;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.vertical-steps-form .ant-form .ant-input-affix-wrapper > input.ant-input {
+  height: 22px;
+  line-height: 22px;
+  padding: 0;
+}
+
+.vertical-steps-form .ant-form .ant-picker-input > input {
+  height: 22px;
+  line-height: 22px;
+}
+
+.vertical-steps-form .ant-form textarea.ant-input {
+  width: 520px;
+  min-height: 76px;
+  resize: vertical;
+}
+
+.vertical-steps-form .ant-pro-steps-form .ant-form-item {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.vertical-steps-form .ant-pro-steps-form .ant-form-item-label {
+  width: 100% !important;
+}
+
+.vertical-steps-form .ant-pro-steps-form .ant-form-item-control {
+  width: 100% !important;
+  flex: none !important;
+}
+
+.vertical-steps-form .ant-checkbox-wrapper {
+  align-items: flex-start !important;
+}
+
+.vertical-steps-form .ant-checkbox {
+  align-self: flex-start !important;
+  margin-top: 3px;
+}
+
+.vertical-steps-form .ant-checkbox + span {
+  line-height: 22px;
+}
+
+.vertical-steps-form .steps-confirm-summary {
+  max-width: 520px;
+  margin-bottom: var(--padding);
+}
+
+.vertical-steps-form .steps-confirm-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+  max-width: 520px;
+}
+
+.vertical-steps-form .steps-confirm-checklist .ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.vertical-steps-form--five-steps .ant-steps-item:not(:last-child) {
+  min-height: 96px;
+  padding-bottom: var(--padding);
+}
+
+.vertical-steps-form--five-steps .ant-steps-item-description {
+  max-width: 200px;
+}
+
+/* ========== 嵌入表单宽面板扩展（`.embed-form-content`）========== */
+
+.embed-form-page-panel {
+  padding: var(--padding-lg);
+}
+
+.embed-form-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nav-space-6);
+}
+
+.embed-form-nav {
+  flex: 0 0 168px;
+  width: 168px;
+}
+
+.embed-form-nav-inner {
+  padding: var(--padding-sm) 0;
+}
+
+.embed-form-content .embed-form-section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.embed-form-content .embed-form-subsection {
+  width: 100%;
+  padding-top: var(--padding-sm);
+  margin-top: var(--margin-md);
+  border-top: 1px dashed var(--color-border-secondary);
+}
+
+.embed-form-content .embed-form-subsection:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.embed-form-content .embed-form-section-body > .ant-pro-form-group,
+.embed-form-content .embed-form-subsection > .ant-pro-form-group {
+  width: 100%;
+}
+
+.embed-form-content .ant-pro-form-group-container {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px !important;
+  row-gap: 0;
+  width: 100%;
+}
+
+.embed-form-content .ant-pro-form-group-container.ant-space {
+  row-gap: 0 !important;
+  column-gap: 24px !important;
+}
+
+.embed-form-content .ant-pro-form-group-container > .ant-space-item {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+}
+
+.embed-form-content .ant-pro-form-group-container .ant-form-item {
+  width: 100%;
+  margin-bottom: var(--form-item-margin-bottom, 24px);
+}
+
+.embed-form-content .embed-form-switch-field .ant-form-item-control-input {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.embed-form-content .pro-field,
+.embed-form-content .pro-field-md,
+.embed-form-content .pro-field-xl {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.embed-form-content .ant-input,
+.embed-form-content .ant-input-affix-wrapper,
+.embed-form-content .ant-input-number,
+.embed-form-content .ant-select,
+.embed-form-content .ant-select .ant-select-selector,
+.embed-form-content textarea.ant-input {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.embed-form-content .embed-form-radio-field .ant-radio-group {
+  display: flex;
+  width: 100%;
+}
+
+.embed-form-content .embed-form-radio-field .ant-radio-button-wrapper {
+  flex: 1;
+  text-align: center;
+}
+
+.embed-form-content .ant-pro-form-group-container > .ant-space-item:has(.embed-form-field-full) {
+  grid-column: 1 / -1;
+}
+
+.embed-form-section {
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--border-radius);
+  padding: var(--padding-lg);
+  margin-bottom: var(--margin-lg);
+}
+
+@media (max-width: 992px) {
+  .embed-form-layout {
+    flex-direction: column;
+  }
+
+  .embed-form-content .ant-pro-form-group-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------------
+ * Global（全局兜底）
+ * ---------------------------------------------------------------- */
+
+/* 全局阴影兜底（与 ConfigProvider 协同）
+ * Ant Design 部分组件默认阴影在浅色画布下容易显脏；这里统一清掉。
+ * Button 建议同步设置 primaryShadow / defaultShadow / dangerShadow 为 none。
+ */
+.ant-btn,
+.ant-btn:hover,
+.ant-btn:focus,
+.ant-btn:active {
+  box-shadow: none !important;
+}
+.ant-badge .ant-badge-count,
+.ant-badge .ant-badge-dot,
+.ant-badge-count-sm {
+  box-shadow: none !important;
+}
