@@ -266,9 +266,10 @@ pnpm dlx create-umi@latest
 3. 复制代码模板
 4. 配置列定义（columns）、排序/筛选逻辑、操作列
 5. **禁止**在工具栏与表格之间插入汇总条；轻量统计放 `PageHeader` extra，见 `components_Table.md` §工具栏与表格之间禁止插入汇总条
-6. 表格卡内部遵循 `components_Table.md` §表格卡内部垂直节奏：左右对齐线 24px；卡内标题 / 工具栏 / Tab / Table / 分页之间统一 16px；分页或无分页 Table 到卡片底部必须保留 16px，禁止 `paddingBlock: 'var(--padding) 0'`、`paddingBottom: 0` 等底部贴边写法
-7. 自定义分页必须使用 `className="ds-table-pagination"` 或等价结构；若使用 Table 内置分页，外层表格卡仍必须保留 `padding-block-end: var(--padding)`
-8. 检查表头单行展示：短枚举列、可排序列须预留标题与图标宽度，列过多时使用横向滚动，禁止压缩到表头跨行
+6. 表格卡内部遵循 `components_Table.md` §表格卡内部垂直节奏与§表格卡头部表达：左右对齐线 24px；卡内标题 / 工具栏 / Tab / Table / 分页之间统一 16px；表格卡左上角必须有简单标题、单行工具栏或结果分类 Tab，禁止只有空白 padding 后直接进入表头；只有确有分类切换时才使用 Tab
+7. ProTable 作为表格卡内容时，外层必须使用 `ds-page-card ds-table-card-padded ds-pro-table-card`；若使用 `toolbar.menu.type: 'tab'`，再叠加 `ds-table-card-with-tabs`，避免 ProTable 默认 ListToolBar / ProCard body padding 与外层卡片 padding 叠加
+8. 自定义分页必须使用 `className="ds-table-pagination"` 或等价结构；若使用 Table 内置分页，外层表格卡仍必须保留 `padding-block-end: var(--padding)`
+9. 检查表头单行展示：短枚举列、可排序列须预留标题与图标宽度，列过多时使用横向滚动，禁止压缩到表头跨行
 
 #### 生成列表页面
 
@@ -295,18 +296,19 @@ pnpm dlx create-umi@latest
 
 **操作步骤**：
 
-1. 读取 `references/components_Chart.md` 中"图表与指标卡共性规则"
-2. 基础图表能力引用 `@ant-design/charts@^2.0.0` 对应版本官方文档，不在 Skill 内复制具体图表配置
+1. 读取 `references/components_Chart.md` 中"图表与指标卡共性规则"与 §图表实现分层
+2. 基础图表能力引用 `@ant-design/charts@^2.0.0` 对应版本官方文档，不在 Skill 内复制具体图表配置；**完整图表**（OnlyCharts、页签关联区、图表 Grid）使用 Charts 实现，**指标卡 mini chart**（56–96px）优先使用 SVG sparkline（见 `01` / `04` 模板），禁止 `<img>` 或文字占位
 3. 先确定页面结构：标题区、筛选区、指标卡、主图表、辅助图表、明细表格
 4. 图表模块间距、容器留白和页面背景遵循 `references/layout.md`
 5. 如涉及指标卡，先按 `references/components_Chart.md` 中 2–6 节的指标卡类型选取合适形态；基础图表区块与指标卡分类需保持边界清晰
 6. 多个同级指标须先按 `components_Chart.md` §同级指标组图表选型判断：优先指标卡 Grid、小型趋势图或单个多 series 主图；禁止多个全宽主图表纵向堆在一个大 Card 中
-7. 同级指标卡必须复用 `scripts/charts/02-IconStatisticCard.tsx` 的 `StatisticCard.statistic` 结构；不得在同一组中混用普通 `Card + div/span` 手写主数值，避免核心数字字号和上下留白不一致
+7. 同级指标卡必须复用 `scripts/charts/02-IconStatisticCard.tsx` 的 `StatisticCard.statistic` 结构；不得在同一组中混用普通 `Card + div/span` 手写主数值，避免核心数字字号和上下留白不一致；默认示例可展示 4 张，但真实生成必须按指标数量自适应：1–2 张靠左不拉满，3–4 张按实际数量等分，5 张及以上最多 4 列换行，窄屏单列
 8. 总分指标卡必须按 `components_Chart.md` §总分指标卡处理：总值和每个分值都是同级指标单元，单元总数为 `1 + 分项数量`，每个单元等宽；必须使用 `ds-total-statistic-card` + `ds-total-statistic-grid` + `ds-total-statistic-cell` 专用结构，所有单元用 `minmax(0, 1fr)` 等分且 `box-sizing: border-box` / `min-width: 0` / `max-width: 100%` 防止长金额或 padding 撑出卡片；禁止生成“左侧总值区 + 右侧分项区”的非等分结构，分割线如有必须挂在同级单元边界并随内容区高度伸展
-9. **指标卡内嵌迷你图表**：须按 `components_Chart.md` §指标卡内嵌迷你图表处理容器对齐与 plot padding；配色按 §指标卡内嵌迷你图表配色（通用）执行——每个指标单元绑定一个语义主色，同一枚迷你图内线条 / 柱体 / 面积 / 点 / 环必须同源同色族，禁止线用一种语义色、主体填充又用另一套默认色；有填充区域的类型（如面积图）使用同色渐变且方向为上浅下深；图表类型与具体配置引用 `@ant-design/charts` 官方文档，不在 Skill 写死某一种图表 API；若需要坐标轴 / 图例 / 完整 tooltip，升级为独立图表区块
-10. 涉及 hover tooltip 的图表，必须按 `components_Chart.md` §图表 Tooltip 浮层规则处理：优先使用当前 Charts 版本支持的 API 将 tooltip 挂到 `document.body` / overlay 容器，层级高于导航基础层，且不得被图表容器 `overflow` 裁切
-11. 嵌套指标卡必须按 `components_Chart.md` §嵌套指标卡处理：多个嵌套指标卡不得使用 `StatisticCard.Group`、`Divider` 或外层白色容器合并，必须像同级指标卡一样使用局部 Grid / Flex 直接落在页面画布上；2–4 张横向等分，1–2 张靠左且不拉满整行，窄屏才切单列；单卡内部才使用 `statistic + chart`，chart 只作为 56–96px（最大 120px）的 mini chart，且每张卡须绑定独立 `semanticColor`，禁止生成多个全宽监控图纵向列表
-12. 页签联动指标卡必须使用 `ds-statistic-tabs` 的 Tabs 选中态；active 项只保留贴近区块底部的 2px 主色 ink bar，禁止主色文字 / 数值、整块浅色背景、描边或 `.card-selected`；各 Tab 等分均分（`flex: 1`），Tabs nav 不保留底部分割线和默认 bottom margin；Tabs 卡片 body 横向 padding 建议为 0，由每个 `.ds-statistic-tab-label` 自己提供左右 24px 内边距，保证第一项总计标题距离整张卡片最左侧 24px，且在 active Tab 单元内也保持 24px 左内距；状态点属于辅助标识槽，不参与标题 / 主数值 / 状态 Tag 的 24px 文字对齐线，总计项不显示状态点，只有分项指标显示状态点，禁止直接用默认 `Statistic.status` 把标题向右挤；状态 Tag 必须与标题 / 主数值左对齐，不得与状态点对齐；关联展示内容在卡片外部作为独立区块，并由 `.ds-page-shell` / `.ds-statistic-linked-content` 保留 16px 区块间距，禁止在 `tabs.children` 中放业务内容；关联内容卡的标题、占位图表、表格或列表必须共享同一 24px 左右对齐线，优先把标题放在 body 内，避免 ProCard header/title 与 body padding 形成两套对齐线
+9. **指标卡内嵌迷你图表**：须按 `components_Chart.md` §指标卡内嵌迷你图表处理容器对齐与 plot padding；配色按 §指标卡内嵌迷你图表配色（通用）执行——每个指标单元绑定一个语义主色，同一枚迷你图内线条 / 柱体 / 面积 / 点 / 环必须同源同色族，禁止线用一种语义色、主体填充又用另一套默认色；有填充区域的类型（如面积图）使用同色渐变且方向为上浅下深（SVG 默认 `stopOpacity` `0.08 → 0.22`）；模板默认 SVG sparkline，不在指标卡内引入 Charts 完整配置；若需要坐标轴 / 图例 / 完整 tooltip，升级为独立图表区块
+10. **完整图表面积填充**：`@ant-design/charts` Area / Column 等有填充区域的类型，须使用 G2 `l(角度) 0:rgba(...) 1:rgba(...)` 写法（模板默认 `l(270)`、`8% → 22%`）；**禁止**在 `style.fill` 中使用 CSS `color-mix()` 或 `linear-gradient()`，否则 Canvas 无法解析、面积区不渲染
+11. 涉及 hover tooltip 的图表，必须按 `components_Chart.md` §图表 Tooltip 浮层规则处理：优先使用当前 Charts 版本支持的 API 将 tooltip 挂到 `document.body` / overlay 容器，层级高于导航基础层，且不得被图表容器 `overflow` 裁切
+12. 嵌套指标卡必须按 `components_Chart.md` §嵌套指标卡处理：多个嵌套指标卡不得使用 `StatisticCard.Group`、`Divider` 或外层白色容器合并，必须像同级指标卡一样使用局部 Grid / Flex 直接落在页面画布上；默认示例可展示 4 张，但真实生成必须按指标数量自适应：1–2 张靠左不拉满，3–4 张等分，5 张及以上最多 4 列换行，窄屏单列；单卡内部使用 `statistic + chart`，chart 只作为 56–96px（推荐 72px，最大 120px）的 mini chart，优先使用同色面积填充的趋势图且每张卡须绑定独立 `semanticColor`，禁止生成多个全宽监控图纵向列表
+13. 页签联动指标卡必须使用 `ds-statistic-tabs` 的 Tabs 选中态；active 项只保留贴在页签指标卡白色卡片底边的 2px 主色 ink bar，禁止主色文字 / 数值、整块浅色背景、描边或 `.card-selected`；各 Tab 等分均分（`flex: 1`），相邻 Tab 须清零 AntD 默认 `margin-left`（`.ant-tabs-tab + .ant-tabs-tab`），避免选中第二项及之后 Tab 时 ink bar 与总计项分割线之间出现空隙；Tabs nav 不保留底部分割线、默认 bottom margin、空 content holder / content / tabpane 高度或 `.ant-pro-card-tabs` 底部 padding；Tabs 卡片 body 横向 padding 建议为 0，由每个 `.ds-statistic-tab-label` 自己提供左右 24px 内边距，保证第一项总计标题距离整张卡片最左侧 24px，且在 active Tab 单元内也保持 24px 左内距；状态点属于辅助标识槽，不参与标题 / 主数值 / 状态 Tag 的 24px 文字对齐线，总计项不显示状态点，只有分项指标显示状态点，禁止直接用默认 `Statistic.status` 把标题向右挤；状态 Tag 必须与标题 / 主数值左对齐，不得与状态点对齐；关联展示内容在卡片外部作为独立区块，并由 `.ds-page-shell` / `.ds-statistic-linked-content` 保留 16px 区块间距，禁止在 `tabs.children` 中放业务内容；关联内容卡的标题、关联图表、表格或列表必须共享同一 24px 左右对齐线，优先把标题放在 body 内，避免 ProCard header/title 与 body padding 形成两套对齐线；关联图表使用 `@ant-design/charts` 随 `activeKey` 切换数据，禁止文字或灰色占位块
 
 #### 生成描述列表页面
 
@@ -425,9 +427,9 @@ PageShell（或布局主内容区）
 10. **侧边栏收起态用户区**：收起态只保留 32px 头像，隐藏用户名和整个 `.user-action-icons` 容器；头像必须设置 `flex: 0 0 32px` / `min-width: 32px` 防止被 flex 压缩，`.user-actions` 收起态须 `gap: 0`。
 11. **侧边栏边界与间距**：SideLayout / MixedLayout 中，除 24px 收起触发器允许向侧边栏右侧受控外露 12px 外，Logo、品牌名、菜单、分组标题、底部用户区（如有）均不得横向溢出；品牌名、菜单文本、用户名必须单行省略。侧边导航节奏固定为：顶部到首个分组 12px、分组标题高 40px、标题到菜单 0、菜单行 40px、分组之间 12px + 分割线 + 12px；如有固定底部用户区，最后一组到底部用户区避让 12px。
 12. **搜索卡 Card body 间距**：`<Card className="ds-search-panel">` 的内边距必须作用到 `.ant-card-body`；禁止只在 Card 外层写 padding，禁止同时写 `styles.body.padding` 与 `.ds-search-panel` padding。搜索框到 Tab 的 16px 只由 `.ds-search-tabs-row` 承担，搜索行不得再写额外 `marginBottom`。
-13. **卡内顶部结果分类 Tab 与轻量工具栏分层**：表格 / 列表卡顶部若是结果分类 Tab（如「全部 / 进行中 / 失败」），必须使用 `ds-card-tab-strip + toolbar-tabs`，固定 **上 16px / Tab 行 32px / 下 16px**；选中态只保留主色文字和 `ds-tab-count` 弱主色数量，禁止灰色底线、AntD ink-bar、整块背景、描边或红 / 黄 / 绿 Badge。Tab 左侧展示结果分类，搜索 / 筛选 / 操作按钮在右侧且不得跨行；右侧控件放不下、字段 ≥5 个或需要展开收起时，必须上移为独立 `ds-search-panel` + `QueryFilter`。普通标题 / 搜索 / 少量筛选 / 结果级操作才使用 `ds-card-toolbar ds-card-toolbar-inline`；搜索卡 Tab 继续使用 `ds-search-tabs`，页签联动指标卡继续使用 `ds-statistic-tabs`，不要混用。
+13. **卡内顶部结果分类 Tab 与轻量工具栏分层**：表格 / 列表卡顶部若是结果分类 Tab（如「全部 / 进行中 / 失败」），必须使用 `ds-card-tab-strip + toolbar-tabs`，固定 **上 16px / Tab 行 32px / 下 16px**；选中态只保留主色文字和 `ds-tab-count` 弱主色数量，禁止灰色底线、AntD ink-bar、整块背景、描边或红 / 黄 / 绿 Badge。表格卡无结果分类时不要强行生成 Tab，使用 `ds-card-title-row` + `ds-table-title` 表达当前数据集名称；禁止卡片左上角只有空白 padding 后直接进入表头。Tab 左侧展示结果分类，搜索 / 筛选 / 操作按钮在右侧且不得跨行；右侧控件放不下、字段 ≥5 个或需要展开收起时，必须上移为独立 `ds-search-panel` + `QueryFilter`。普通标题 / 搜索 / 少量筛选 / 结果级操作才使用 `ds-card-toolbar ds-card-toolbar-inline`；搜索卡 Tab 继续使用 `ds-search-tabs`，页签联动指标卡继续使用 `ds-statistic-tabs`，不要混用。
 14. **页面级白卡投影**：页面业务容器（`ds-page-card`、`ds-search-panel`、`ds-list-card`、`ds-table-card`、`ds-statistic-card`）统一白底、8px 圆角、`var(--shadow)` 轻投影并清除默认描边；AntD Card / ProCard 生成时优先 `bordered={false}`。对象选择卡 / 卡片列表项可用细描边表达交互状态，但不得替代页面级白卡投影。
-15. **页面级内容卡 padding 唯一来源**：基础业务卡内容区固定上下 `var(--padding)`（16px）、左右 `var(--nav-space-6)`（24px），适用于通用 Card、列表卡、表格卡、指标卡、图表卡、描述分组卡和对象选择卡；不适用于表单内部字段布局、StepsForm 步骤条、嵌入表单弱分组、QueryFilter 字段栅格和 submitter。普通 `div.ds-page-card` 由外层承担；AntD `Card` / ProCard / `StatisticCard` 必须命中 `.ant-card-body` / `.ant-pro-card-body`；`ds-list-card` 的 Card body 必须清零，由壳层承担 24px 内容线。禁止 `bodyStyle={{ padding: 24 }}`、`styles.body.padding: 24`、toolbar / List item / Table wrapper 再次写水平 padding。Table 外框跟随卡片 24px 内容线，但首末列必须保留 `var(--padding)`（16px）单元格内部留白，避免表头 / 行内容文字贴边。对象选择卡可保留描边状态，但 body padding 不例外。
+15. **页面级内容卡 padding 唯一来源**：基础业务卡内容区固定上下 `var(--padding)`（16px）、左右 `var(--nav-space-6)`（24px），适用于通用 Card、列表卡、表格卡、指标卡、图表卡、描述分组卡和对象选择卡；不适用于表单内部字段布局、StepsForm 步骤条、嵌入表单弱分组、QueryFilter 字段栅格和 submitter。普通 `div.ds-page-card` 由外层承担；AntD `Card` / ProCard / `StatisticCard` 必须命中 `.ant-card-body` / `.ant-pro-card-body`；`ds-list-card` 的 Card body 必须清零，由壳层承担 24px 内容线。禁止 `bodyStyle={{ padding: 24 }}`、`styles.body.padding: 24`、toolbar / List item / Table wrapper 再次写水平 padding。Table 外框跟随卡片 24px 内容线，但首末列必须保留 `var(--padding)`（16px）单元格内部留白，避免表头 / 行内容文字贴边。ProTable 必须用 `ds-pro-table-card` 清掉内部 ProCard body / ListToolBar 默认 padding，避免与外层表格卡叠加。对象选择卡可保留描边状态，但 body padding 不例外。
 16. **搜索卡与 QueryFilter 分层**：`ds-search-panel` 是页面级筛选区容器，负责白卡外观、区块间距和 Card body padding；`QueryFilter` 是内部筛选表单组件，负责字段栅格、展开收起、查询 / 重置和提交行为。复杂筛选必须使用 `<Card bordered={false} className="ds-search-panel"><QueryFilter ... /></Card>`；禁止把 `QueryFilter` 当成独立白卡外壳，也禁止在复杂筛选场景用手写搜索卡字段替代 `QueryFilter`。筛选项 ≤4 且一行清晰时才使用卡内单行工具栏或轻量搜索卡字段。
 
 ### Design Token 集成（复制模板时必做）

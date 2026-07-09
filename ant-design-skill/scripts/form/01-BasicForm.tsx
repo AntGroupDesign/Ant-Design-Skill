@@ -53,7 +53,7 @@ export default function BasicFormPlayground() {
   >();
 
   return (
-    <div className="basic-form-page" style={{ padding: '24px 0 0 48px' }}>
+    <div className="basic-form-page ds-page-card ds-form-panel">
       <ProForm<{
         name: string;
         company?: string;
@@ -81,7 +81,7 @@ export default function BasicFormPlayground() {
       autoFocusFirstInput
       submitter={{
         render: (_, dom) => (
-          <div style={{ textAlign: 'left', marginTop: 32, paddingBottom: 72 }}>
+          <div style={{ textAlign: 'left', marginTop: 'var(--nav-space-6)' }}>
             <Space size={8}>
               <Button onClick={() => formRef.current?.resetFields()}>重置</Button>
               <Button type="primary" onClick={() => formRef.current?.submit()}>提交</Button>

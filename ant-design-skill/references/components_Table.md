@@ -155,7 +155,7 @@ const tableTheme = {
 
 > **注意**：`ConfigProvider` 的 `theme.token` / `theme.components` 须传入**具体色值**（如 `#1677ff`、`#fafafa`），**禁止**传入 CSS 变量字符串（如 `'var(--color-primary)'`），否则 Ant Design 运行时无法正确解析。
 
-表格卡片内**工具栏 / Tab / 筛选区 / Table 外框 / 分页器**共用同一条卡片内部内容线，距卡片外缘 **24px**（`var(--nav-space-6)`），与 [`layout.md` §页面内容水平对齐](layout.md#页面内容水平对齐)、[`components_List.md`](components_List.md) 的容器内部留白一致。Table 表头 / 表体文字还须保留自身单元格可读留白：首列 `padding-left: var(--padding)`（16px）、末列 `padding-right: var(--padding)`（16px）。该内部内容线不得套用到页面级 PageHeader；页面级标题继承 Content 留白并与卡片外缘对齐。
+表格卡片内**标题行 / 工具栏 / Tab / 筛选区 / Table 外框 / 分页器**共用同一条卡片内部内容线，距卡片外缘 **24px**（`var(--nav-space-6)`），与 [`layout.md` §页面内容水平对齐](layout.md#页面内容水平对齐)、[`components_List.md`](components_List.md) 的容器内部留白一致。Table 表头 / 表体文字还须保留自身单元格可读留白：首列 `padding-left: var(--padding)`（16px）、末列 `padding-right: var(--padding)`（16px）。该内部内容线不得套用到页面级 PageHeader；页面级标题继承 Content 留白并与卡片外缘对齐。
 
 #### 表格卡内部垂直节奏（16 / 16 / 24）
 
@@ -163,13 +163,15 @@ const tableTheme = {
 
 | 位置 | 间距 | Token | 说明 |
 | :-- | :-- | :-- | :-- |
-| 卡片左 / 右边缘 → 工具栏、Tab、Table 外框、分页内容线 | **24px** | `var(--nav-space-6)` | 由卡片内容区承担 |
+| 卡片左 / 右边缘 → 标题行、工具栏、Tab、Table 外框、分页内容线 | **24px** | `var(--nav-space-6)` | 由卡片内容区承担 |
 | Table 单元格边缘 → 首末列文字 | **16px** | `var(--padding)` | 表格自己的可读留白，避免文字贴灰色表头 / 行背景边缘 |
 | 卡片顶部 → 工具栏 / Tab 行 | **16px** | `var(--padding)` | 卡片 `padding-block-start` 承担，工具栏自身不再加 top padding |
 | 工具栏 / Tab 行 → Table 顶部 | **16px** | `var(--padding)` | `ds-table-toolbar + Table` 或 ProTable ListToolBar `padding-bottom` 承担 |
 | Table 底部 → 分页器 | **16px** | `var(--padding)` | 由 `.ant-table-pagination` margin-top 或 `.ds-table-pagination` padding-top 承担 |
 | 分页器 → 卡片底部 | **16px** | `var(--padding)` | 卡片 `padding-block-end` 承担 |
 | 无分页 Table → 卡片底部 | **16px** | `var(--padding)` | 卡片 `padding-block-end` 承担，禁止贴底 |
+
+带 Tab 的 ProTable（`ds-table-card-with-tabs`）分页器只保留 `margin-top: var(--padding)`，`margin-bottom` 必须为 0；底部收口只由外层 `ds-page-card` / `ds-table-card` 的 `padding-block-end: var(--padding)` 承担，禁止形成「分页器 margin-bottom 16px + 卡片 padding-bottom 16px」的 32px 叠加。
 
 **禁止**：
 
@@ -192,9 +194,26 @@ const tableTheme = {
 <div
   className="ds-page-card ds-table-card-padded"
 >
+  <div className="ds-card-title-row">
+    <span className="ds-table-title">用户列表</span>
+  </div>
   <Table ... />
 </div>
 ```
+
+**ProTable 标准写法**（有 `headerTitle`、`toolBarRender`、`toolbar`、`tableAlertRender` 等内部 toolbar / alert 时使用）：
+
+```tsx
+<div className="ds-page-card ds-table-card-padded ds-pro-table-card">
+  <ProTable
+    headerTitle="批量操作"
+    search={false}
+    ...
+  />
+</div>
+```
+
+> `ds-pro-table-card` 只处理 ProTable 内部 `ProCard body`、`ListToolBar`、分页等默认 padding / margin，避免与外层 `ds-page-card ds-table-card-padded` 的 **上 16 / 左右 24 / 下 16** 节奏叠加。若 ProTable 同时使用 `toolbar.menu.type: 'tab'`，还需叠加 `ds-table-card-with-tabs`。
 
 **自定义 toolbar / pagination 推荐结构**：
 
@@ -334,6 +353,18 @@ import { Table, Pagination } from 'antd';
 | **标题下拉菜单** | 表格存在几种核心状态或分类需切换，且选项数量为 4-7 个时使用。若选项 ≤4 个且需要高曝光，优先使用"带标签"而非下拉菜单 | 将核心状态/分类设计成标题下拉菜单，方便快速切换 |
 | **带标签** | 存在筛选频率最高的字段，子集固定且数量较少（≤4个） | 将最高频筛选字段的子集用卡内顶部 Tab Strip 展示在工具栏最左侧 |
 
+### 表格卡头部表达
+
+表格卡顶部必须有清晰的上下文表达，避免卡片左上角只有空白 padding 后直接进入表头。根据业务复杂度三选一：
+
+| 头部类型 | 适用场景 | 结构 |
+| :-- | :-- | :-- |
+| 简单标题 | 基础表格、筛选排序表格、嵌套表格、拖拽排序表格等没有结果分类的场景 | `ds-card-title-row` + `ds-table-title`，下方直接接 `Table` |
+| 单行工具栏 | 需要少量搜索、筛选或右侧操作，且能单行展示 | `ds-card-toolbar ds-card-toolbar-inline`，左标题右操作，下方接 `Table` |
+| 卡内顶部 Tab Strip | 有结果分类切换，如「全部 / 运行中 / 异常」 | `ds-card-tab-strip table-toolbar-with-tabs` 或 ProTable `toolbar.menu.type: 'tab'` |
+
+**不要为了填补左上角空白强行生成 Tab**。只有当数据集确实存在固定分类 / 状态切换时才使用 Tab；否则使用简单标题。若页面级 `PageHeader` 已经表达全局标题，表格卡内仍需表达当前数据集名称（如「用户列表」「应用版本列表」），但避免重复写成同一个页面大标题。
+
 ### 卡内顶部 Tab Strip
 
 当表格顶部存在结果分类 Tab（如「全部 / 进行中 / 失败」或「数据表 / API」）时，须使用卡内顶部 Tab Strip。Tab Strip 是结果集合的轻量分类导航，不等同普通工具栏，不用于承载复杂筛选。
@@ -390,18 +421,19 @@ import { Table, Pagination } from 'antd';
 
 > `ds-card-tab-strip`、`table-toolbar-with-tabs`、`toolbar-tabs`、`ds-table-card-with-tabs`、`ds-tab-count` 样式定义见 `references/global-style.css`。Tab Strip 按 **16 / 32 / 16** 固定节奏承接到 Table，禁止再包一层 `marginTop`。
 
-**ProTable 实现注意**（`toolbar.menu.type: 'tab'` + 外层卡片 **方案 B**：`ds-page-card ds-table-card-padded`）：
+**ProTable 实现注意**（外层卡片 **方案 B**：`ds-page-card ds-table-card-padded`）：
 
 | 问题 | 原因 | 处理 |
 | :-- | :-- | :-- |
-| Tab 距卡片顶约 32px（偏大） | 外层卡片 `padding-block-start: 16px` 与 ProTable ListToolBar 默认 `padding-block: 16px` 叠加 | 外层容器加 `className="ds-table-card-with-tabs"`，由 `global-style.css` 去掉工具栏 `padding-block-start` |
+| ProTable 标题 / 工具栏距卡片顶约 32px（偏大） | 外层卡片 `padding-block-start: 16px` 与 ProTable ListToolBar 默认 `padding-block: 16px` 叠加 | 外层容器加 `className="ds-pro-table-card"`，由 `global-style.css` 去掉工具栏 `padding-block-start` |
 | Table 左右缩进偏大（48px） | 外层 `ds-page-card` 与 Table 首末列 24px 叠加 | 外层容器同时加 `ds-table-card-padded` |
-| Table 左右缩进偏大（ProCard body） | ProTable 内部 `ProCard` body 仍有默认 padding | 外层容器加 `className="ds-table-card-with-tabs"`，由 `global-style.css` 清掉 `.ant-pro-card-body` padding |
-| Tab Strip 与 Table 顶间距 | ListToolBar 容器默认 padding 偏大 | `ds-table-card-with-tabs` 将底部 padding 收敛为 `var(--padding)`（16px），勿再额外 `marginTop` / 外层包裹 |
+| Table 左右缩进偏大（ProCard body） | ProTable 内部 `ProCard` body 仍有默认 padding | 外层容器加 `className="ds-pro-table-card"`，由 `global-style.css` 清掉 `.ant-pro-card-body` padding |
+| ProTable toolbar / alert 与 Table 顶间距 | ListToolBar 容器默认 padding 偏大，易与外层 16px 节奏叠加 | `ds-pro-table-card` 将底部 padding 收敛为 `var(--padding)`（16px），勿再额外 `marginTop` / 外层包裹 |
+| Tab Strip 与 Table 顶间距 | ProTable 使用 `toolbar.menu.type: 'tab'` 时还存在 Tabs 默认线条、ink-bar 与高度差异 | 在 `ds-pro-table-card` 基础上叠加 `ds-table-card-with-tabs`，统一 Tab Strip 样式 |
 
 ```tsx
 <div
-  className="ds-page-card ds-table-card-padded ds-table-card-with-tabs"
+  className="ds-page-card ds-table-card-padded ds-pro-table-card ds-table-card-with-tabs"
   style={{ background: 'var(--color-bg-container)', ... }}
 >
   <ProTable
@@ -663,6 +695,6 @@ import { Table, Pagination } from 'antd';
 
 > `activeKey` 与 Tab 状态需通过 `useState` 受控管理，切 Tab 时触发数据重新请求（`request` 会自动被调用）。
 
-**间距**：外层卡片须加 `className="ds-page-card ds-table-card-padded ds-table-card-with-tabs"`，避免 ProTable ListToolBar 与卡片 `padding` 叠加导致 Tab 距顶变为 32px，并防止 Table 首末列双倍缩进；详见上文「卡内顶部 Tab Strip → ProTable 实现注意」。
+**间距**：外层卡片须加 `className="ds-page-card ds-table-card-padded ds-pro-table-card ds-table-card-with-tabs"`，避免 ProTable ListToolBar / ProCard body 与卡片 `padding` 叠加导致 Tab 距顶变为 32px，并防止 Table 首末列双倍缩进；详见上文「卡内顶部 Tab Strip → ProTable 实现注意」。
 
 **代码模板**：`scripts/table/06-ToolbarTable.tsx`

@@ -112,6 +112,9 @@ const expandedRowRender = () => (
 const App: React.FC = () => (
   <ConfigProvider theme={tableTheme}>
     <div className="ds-page-card ds-table-card-padded">
+      <div className="ds-card-title-row">
+        <span className="ds-table-title">应用版本列表</span>
+      </div>
       <Table<DataType>
         columns={columns}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}

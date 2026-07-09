@@ -178,7 +178,7 @@ const ToolbarTable = () => {
 export default () => (
   <ConfigProvider theme={tableTheme}>
     <div
-      className="ds-page-card ds-table-card-padded ds-table-card-with-tabs"
+      className="ds-page-card ds-table-card-padded ds-pro-table-card ds-table-card-with-tabs"
     >
       <ToolbarTable />
     </div>

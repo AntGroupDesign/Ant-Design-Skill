@@ -113,6 +113,8 @@
 
 - 组件宽度不超出页面内容区域，与页面网格系统对齐
 - 组件边距继承自页面全局间距系统（`--margin` / `--padding` 相关变量）
+- 描述列表作为页面主内容时必须有白色承载面：基础描述列表、可编辑描述列表使用外层 `ds-page-card`；分组卡片描述列表由每个分组 `Card` 自身承担白卡容器
+- 禁止让单组 `Descriptions` / `ProDescriptions` 直接浮在灰色页面背景上；也禁止为了补白底而在分组卡片外再套一层大 Card
 - 详情页通常配合 `PageHeader`（面包屑 + 标题行 + 右侧操作）使用；带面包屑时遵循 [`layout.md` §带面包屑的页面标题区](layout.md#带面包屑的页面标题区)，多分组场景见 [§3 分组卡片描述列表](#3-分组卡片描述列表-grouped-card-descriptions)
 
 ---
@@ -123,6 +125,7 @@
 
 **约束**：
 - 使用 AntD `Descriptions` 组件，`items` 属性传入字段数组，禁止使用旧版 `Descriptions.Item` 子组件写法
+- 作为页面主内容时，外层必须包裹 `ds-page-card`，由白卡承担页面级背景、圆角、阴影与 24px 水平内边距
 - `column` 根据字段数量设置为 `2` 或 `3`
 - label 颜色由 AntD 默认样式控制，对应 `var(--color-text-tertiary)`，**无需手动覆盖**
 - 状态字段使用 `Tag` 组件，颜色语义正确
@@ -139,6 +142,7 @@
 
 **约束**：
 - 使用 `@ant-design/pro-components` 的 `ProDescriptions` 组件，**不使用** antd 原生 `Descriptions`
+- 作为页面主内容时，外层必须包裹 `ds-page-card`，禁止 `ProDescriptions` 直接落在灰色页面背景上
 - 通过 `editable={{ onSave }}` 开启行内编辑；`onSave` 返回 `true` 退出编辑态；列级 `editable: false` 可单独禁用某列
 - 字段定义优先使用 `columns` 数组；也可通过 `ProDescriptions.Item` 子组件追加字段
 - 字段类型通过 `valueType` 声明（`select` / `date` / `money` / `digit` / `rate` / `percent` 等），ProDescriptions 自动渲染对应的展示与编辑控件
@@ -163,7 +167,7 @@
 > **适用场景**：一级页面含 **2 个及以上** 只读语义分组（如「账户信息」「机构信息」）。单组用 [§1](#1-基础描述列表-basic-descriptions)，可编辑用 [§2](#2-可编辑描述列表-editable-descriptions)。
 
 **约束**：
-- 页面内容区**禁止**外层大 Card 包裹全部分组；每组一个 `Card`（`bordered={false}`），分组名写 **`Card` 的 `title`**，**禁止**用 `Descriptions.title` 充当分组标题
+- 页面内容区**禁止**外层大 Card 包裹全部分组；每组一个 `Card`（`bordered={false}`，`className="ds-page-card"` 或等效白卡样式），分组名写 **`Card` 的 `title`**，**禁止**用 `Descriptions.title` 充当分组标题
 - Card 内放一组 `Descriptions`（无 `title`），`column` 设为 `2` 或 `3`；字段展示规则同 §1，含 [操作 icon 与同行对齐](#操作-icon-与同行对齐)
 - 复用模板导出的 `descriptionGroupCardStyles`、`descriptionGroupCardStyle`（白卡片外观、标题下无分割线；Card body 遵循页面级内容区 **上/下 16px、左/右 24px**，见 [`layout.md` §页面内容水平对齐](layout.md#页面内容水平对齐)）
 - Card 之间间距 **16px**（`var(--margin)`）

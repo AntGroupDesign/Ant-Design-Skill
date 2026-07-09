@@ -228,8 +228,12 @@ body,
   flex-wrap: wrap;
 }
 
-.ds-page-title {
+/* 页面主标题 typography：仅作用于页面标题区容器内，禁止复用到卡内 / 区块标题 */
+.ds-page-header .ds-page-title,
+.ds-page-title-row .ds-page-title {
   margin: 0;
+  font-size: var(--font-size-heading-4);
+  line-height: calc(var(--font-size-heading-4) + 8px);
   color: var(--nav-color-text-active);
 }
 
@@ -496,6 +500,17 @@ body,
   margin-left: auto;
 }
 
+.ds-table-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: var(--font-size);
+  font-weight: 600;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* 卡片内部顶部结果分类 Tab：仅用于表格 / 列表卡内的结果分类，固定 16 / 32 / 16 */
 .ds-card-tab-strip {
   display: flex;
@@ -581,6 +596,22 @@ body,
   margin-inline: 0 !important;
 }
 
+/* ProTable 作为页面表格卡内容时，清理内部 ProCard / ListToolBar 默认留白，避免与外层 16/24 节奏叠加 */
+.ds-pro-table-card .ant-pro-card-body {
+  padding: 0 !important;
+}
+
+.ds-pro-table-card .ant-pro-table-list-toolbar-container {
+  padding-block-start: 0 !important;
+  padding-block-end: var(--padding) !important;
+  padding-inline: 0 !important;
+}
+
+.ds-pro-table-card .ant-table-pagination.ant-pagination {
+  margin-block: var(--padding) 0 !important;
+  margin-inline: 0 !important;
+}
+
 /* ----------------------------------------------------------------
  * 页面内容 Card 默认留白（layout.md §页面内容水平对齐）
  * ---------------------------------------------------------------- */
@@ -591,6 +622,11 @@ body,
   box-shadow: var(--shadow);
   padding-block: var(--padding);
   padding-inline: var(--nav-space-6);
+}
+
+/* 表单白卡外圈：基础 / 嵌入 / 筛选表单上下左右统一 24px */
+.ds-page-card.ds-form-panel {
+  padding: var(--nav-space-6);
 }
 
 .ant-card.ds-page-card,
@@ -731,9 +767,6 @@ body,
 }
 
 .ds-statistic-card.ant-card > .ant-card-body {
-  display: flex;
-  align-items: center;
-  height: 100%;
   padding: var(--padding) var(--nav-space-6) !important;
 }
 
@@ -875,6 +908,47 @@ body,
   object-position: left top;
 }
 
+/* 嵌套指标卡：标题、数值、mini chart 纵向排列；图表宽度铺满内容区 */
+.ds-nested-statistic-card.ant-pro-statistic-card > .ant-pro-card-body {
+  align-items: stretch;
+  min-height: 194px;
+}
+
+.ds-nested-statistic-card.ant-pro-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.ds-nested-statistic-card .ant-pro-statistic-card-content > .ant-pro-card-statistic {
+  flex: 0 0 auto;
+}
+
+.ds-nested-statistic-card
+  > .ant-pro-card-body
+  > .ant-pro-statistic-card-content
+  > .ant-pro-card-statistic
+  .ant-statistic-title {
+  margin-bottom: var(--nav-space-1);
+}
+
+.ds-nested-statistic-card .ant-pro-statistic-card-chart {
+  flex: 0 0 72px;
+  height: 72px;
+  margin-top: var(--padding);
+  margin-bottom: 0 !important;
+}
+
+.ds-nested-statistic-card .ds-statistic-mini-chart,
+.ds-nested-statistic-card .ds-statistic-mini-chart svg {
+  width: 100%;
+  height: 72px;
+}
+
 /* 总分指标卡：总值与每个分值都是同级单元，必须等分并防止长金额撑出卡片 */
 .ds-statistic-card.ds-total-statistic-card,
 .ds-total-statistic-card {
@@ -942,10 +1016,11 @@ body,
 }
 
 /* 页签联动指标卡：active 只用底部 ink bar 表达，禁止整块卡片选中底色 */
-.ant-pro-card.ds-statistic-tabs > .ant-pro-card-body {
+.ant-pro-card.ds-statistic-card.ds-statistic-tabs > .ant-pro-card-tabs {
   padding: var(--padding) 0 0 !important;
 }
 
+.ds-statistic-tabs .ant-tabs-top > .ant-tabs-nav,
 .ds-statistic-tabs .ant-tabs-nav {
   margin: 0 !important;
 }
@@ -954,8 +1029,15 @@ body,
   border-bottom: 0 !important;
 }
 
-.ds-statistic-tabs .ant-tabs-content-holder {
-  display: none;
+.ds-statistic-tabs .ant-tabs-content-holder,
+.ds-statistic-tabs .ant-tabs-content,
+.ds-statistic-tabs .ant-tabs-tabpane {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
 }
 
 .ds-statistic-tabs .ant-tabs-nav-wrap,
@@ -965,6 +1047,8 @@ body,
 
 .ds-statistic-tabs .ant-tabs-nav-list {
   display: flex;
+  margin-block-start: 0 !important;
+  padding-inline-start: 0 !important;
 }
 
 .ds-statistic-tabs .ant-tabs-tab,
@@ -974,6 +1058,11 @@ body,
   flex: 1 1 0 !important;
   margin-inline-end: 0 !important;
   padding-inline: 0 !important;
+}
+
+.ds-statistic-tabs .ant-tabs-tab + .ant-tabs-tab {
+  margin-inline-start: 0 !important;
+  margin-left: 0 !important;
 }
 
 .ds-statistic-tabs .ant-tabs-tab-btn {
@@ -991,7 +1080,7 @@ body,
 .ds-statistic-tabs .ds-statistic-tab-label {
   width: 100%;
   box-sizing: border-box;
-  padding-inline: var(--padding);
+  padding-inline: var(--nav-space-6);
   padding-block-end: var(--padding);
   position: relative;
 }
@@ -999,7 +1088,7 @@ body,
 .ds-statistic-tabs .ds-statistic-tab-status-dot {
   position: absolute;
   top: 6px;
-  left: calc(var(--padding) - 12px);
+  left: calc(var(--nav-space-6) - 12px);
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -1125,6 +1214,19 @@ body,
 .ant-card.ds-search-panel:has(.ds-search-advanced-filter) > .ant-card-body,
 .ant-pro-card.ds-search-panel:has(.ds-search-advanced-filter) > .ant-pro-card-body {
   padding-bottom: var(--nav-space-5) !important;
+}
+
+/* 筛选表单白卡：QueryFilter 承载容器上下左右统一 24px */
+.ant-card.ds-search-panel.ds-form-panel > .ant-card-body,
+.ant-pro-card.ds-search-panel.ds-form-panel > .ant-pro-card-body,
+.ds-page-panel.ds-search-panel.ds-form-panel:not(.ant-card):not(.ant-pro-card),
+.ds-search-panel.ds-form-panel:not(.ant-card):not(.ant-pro-card) {
+  padding: var(--nav-space-6) !important;
+}
+
+/* QueryFilter 默认自带 24px padding；在搜索卡内必须清零，外圈留白由 Card body 唯一承担 */
+.ds-search-panel .ant-pro-query-filter {
+  padding: 0 !important;
 }
 
 
@@ -1294,7 +1396,8 @@ body,
   height: var(--padding);
 }
 
-.ant-list.ds-list-card:not(:has(.ant-list-footer)) {
+.ant-list.ds-list-card:not(:has(.ant-list-footer)),
+.ant-list.list-surface-card:not(:has(.ant-list-footer)) {
   padding-block-end: var(--padding);
 }
 
@@ -1535,7 +1638,7 @@ body,
 }
 
 .ds-table-card-with-tabs .ant-table-pagination.ant-pagination {
-  margin-block: var(--padding) var(--padding) !important;
+  margin-block: var(--padding) 0 !important;
   margin-inline: 0 !important;
 }
 

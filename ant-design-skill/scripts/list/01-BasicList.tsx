@@ -24,13 +24,6 @@ export default function BasicList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>1. 基础列表（Basic List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-          适用于以列表形式展示结构化数据的通用场景，每条数据包含标题、描述、状态、标签和操作等基本信息。
-        </p>
-      </div>
-
       <List
         header={
           <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0' }}>

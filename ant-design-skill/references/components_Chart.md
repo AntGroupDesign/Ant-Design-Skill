@@ -45,6 +45,29 @@
 | 多个指标都需要同时展示数值和趋势图 | 嵌套指标卡 (Nested Statistic Cards) | `scripts/charts/04-NestedStatisticCard.tsx` |
 | 多维指标需要通过页签切换查看 | 页签联动指标卡 (Tabbed Statistic Cards) | `scripts/charts/05-TabsStatisticCard.tsx` |
 
+### 指标卡形态对比（含 mini chart）
+
+基础指标卡与嵌套指标卡都使用 `StatisticCard` 的 `statistic + chart`，且 `chart` 区域均可放置 mini chart；**选型关键不在「有没有趋势图」，而在「指标数量与信息密度」**。
+
+| 维度 | 基础指标卡 (01) | 嵌套指标卡 (04) | 同级指标卡 (02) |
+| :-- | :-- | :-- | :-- |
+| 卡片数量 | **1 张** | **多张** Grid / Flex 并排 | **多张** Grid / Flex 并排 |
+| 典型场景 | 单个重点 KPI（部门销售额、本月 GMV） | 多指标监控（CPU / 内存 / 磁盘 / 网络） | 多指标快速扫读（访客、支付、完成率） |
+| 辅助说明 | 可较丰富（完成度、目标、口径说明） | 结构更轻，主要靠标题 + 数值 + 趋势 | 可有 `description`，但以数值识别为主 |
+| 标题交互 | 支持跳转箭头、右侧操作图标 | 通常只有简单标题 | 带 `statistic.icon` 增强识别 |
+| mini chart | 可有，辅助**单个**指标判断 | **每张必有**，且每张绑定独立 `semanticColor` | **不含** chart 区域 |
+| 卡片宽度 | 单卡建议 `maxWidth: 480`，1 张时不拉满整行 | 1–2 张靠左，3–4 张等分，5 张及以上最多 4 列换行 | 布局规则与嵌套指标卡一致 |
+| 外层容器 | 单卡直接落在页面内容区 | 多张独立卡直接落在页面画布，**禁止** `StatisticCard.Group`、外层大 Card 或 `Divider` 合并 | 同上 |
+
+**快速判断**：
+
+- **1 个指标 + 需要较完整上下文（辅助说明、操作位、跳转）** → 基础指标卡
+- **多个同级指标 + 每个都要同时看数值和轻量趋势** → 嵌套指标卡
+- **多个同级指标 + 只需快速识别数值、不需要趋势** → 同级指标卡
+- **多个指标需要完整坐标轴、图例、长时间分析** → 基础图表 / 图表 Grid，不得继续用嵌套指标卡
+
+> 「嵌套」指多张独立 `StatisticCard` 以 Grid 排列后，单卡内部形成「数值在上、mini chart 在下」的上下结构；**不是**把多个指标合并进一张大卡。
+
 ### 同级指标组图表选型
 
 当页面需要同时展示多个同级指标时，应先判断这些指标之间的关系，再选择结构。这里的同级指标指：业务层级相同、时间范围一致、用于并列比较或共同说明一个主题的一组指标，例如资源使用率、转化指标、风险状态、工单状态、渠道数据、成本指标等。
@@ -114,6 +137,19 @@
 - 分类对比优先使用柱状图 / 条形图
 - 占比结构可使用饼图 / 环图，但分类过多时应改用条形图或表格
 - 明细数据、可操作数据仍优先使用表格或列表，不强行图表化
+
+### 图表实现分层
+
+生成图表时须按展示场景选择实现方式，**禁止**使用静态 `<img>` 占位图、灰色示意 div 或纯文字占位代替真实图表。
+
+| 场景 | 实现方式 | Skill 模板 |
+| :-- | :-- | :-- |
+| 完整图表区块（OnlyCharts、页签关联区主图、图表 Grid 单图） | `@ant-design/charts`（Area / Line / Column 等）；面积填充使用 G2 `l(角度)` 或 `rgba()` 渐变，**禁止** CSS `color-mix()` / `linear-gradient()` | `scripts/charts/00-OnlyChartsBlock.tsx`、`scripts/charts/05-TabsStatisticCard.tsx` |
+| 指标卡内嵌 mini chart（56–96px，推荐 72px） | 轻量 **SVG sparkline**（参考 `MiniAreaSparkline`）；同色面积填充 `stopOpacity` 默认 `0.08 → 0.22` | `scripts/charts/01-BasicStatisticCard.tsx`、`scripts/charts/04-NestedStatisticCard.tsx` |
+| 需要坐标轴、图例、完整 tooltip、多序列分析 | 升级为卡片外部独立图表区块，使用 `@ant-design/charts` | 见 §基础图表、§纯图表区块 |
+
+- 完整图表与 mini chart 的配色均遵循 §指标卡内嵌迷你图表配色（通用）与 §填充渐变；mini chart 用 SVG `linearGradient`，完整 Area 用 G2 `l(270)` 等语法
+- Skill 模板提供可运行参考实现；业务项目可按数据结构替换 series / `data`，但不得回退为占位图
 
 ### 加载、空态与错误态
 
@@ -199,7 +235,7 @@ PageShell
 - 外层容器使用 `className="ds-statistic-mini-chart"` 或 `StatisticCard.chart` 默认容器；不得额外设置水平 `padding`，须与指标名称、核心数值共享同一左对齐线；卡片左右留白只由 `ds-statistic-card` 的 24px 内容区 padding 提供
 - 迷你图表内部 plot padding 应尽量贴合画布：左 / 右 / 下默认为 0；为避免线条、柱体、面积或环图被裁切，最多保留 2–4px 安全留白
 - 卡片底部留白只由 `ds-statistic-card` 的 body padding 提供；图表本体不得再叠加 16px / 24px bottom padding
-- 使用 `@ant-design/charts` 时，迷你图表配置应关闭坐标轴 / 图例，并将 `padding` / `appendPadding` 控制在 `0` 或 `[2, 2, 2, 2]` 这类安全留白范围内；禁止使用完整图表的 `padding: 'auto'` 或大额 left / right / bottom padding
+- 指标卡模板中的 mini chart（`01`、`04`）默认使用 **SVG sparkline** 实现，不引入 `@ant-design/charts` 完整配置；若业务确需 Charts Tiny 系列，须关闭坐标轴 / 图例，并将 `padding` / `appendPadding` 控制在 `0` 或 `[2, 2, 2, 2]` 这类安全留白范围内；禁止使用完整图表的 `padding: 'auto'` 或大额 left / right / bottom padding
 
 #### 指标卡内嵌迷你图表配色（通用）
 
@@ -225,8 +261,9 @@ PageShell
 **填充渐变（仅适用于有填充区域的类型）**
 
 - 渐变方向：**上浅下深**（上更透 → 下更实），不是上深下透
-- 推荐透明度区间：靠近线条约 8%–15%，靠近底部约 20%–35%；仍使用同一色相，不是换成另一种颜色
-- 若底部过重，应降低底部透明度，而不是换成另一套色系
+- 推荐透明度区间：靠近线条约 **8%–12%**，靠近底部约 **18%–25%**；仍使用同一色相，不是换成另一种颜色
+- 代码模板默认采用更轻的 `8% → 22%` 渐变（靠近线条 8%、靠近底部 22%）；若仍显厚重，优先继续降低底部透明度，而不是换成另一套色系
+- 完整图表（`@ant-design/charts` Area / Column 等）填充渐变须使用 G2 支持的 `l(角度) 0:颜色 1:颜色` 或 `rgba()` 写法；**禁止**在 `style.fill` 中使用 CSS `color-mix()`，Canvas 无法解析会导致面积区不渲染
 
 **实现方式**
 
@@ -348,7 +385,7 @@ PageShell
 
 - 图表区块可保留标题、tooltip 或简短说明，用于说明统计口径
 - 图表容器和区块间距遵循"图表与指标卡共性规则"与 `layout.md`
-- 图表本体能力引用 Ant Design Charts 官方文档
+- 图表本体使用 `@ant-design/charts` 实现（模板默认 `Area`）；面积填充须用 G2 `l(270)` + `rgba()` 渐变，遵循 §填充渐变，禁止 `color-mix()` 或 CSS `linear-gradient()`
 - 不把 OnlyCharts 作为指标卡模板使用
 
 **区块模板**：`scripts/charts/00-OnlyChartsBlock.tsx`
@@ -359,14 +396,32 @@ PageShell
 
 > **适用场景**：通用型数据展示场景，适合需要平衡信息密度与可读性的仪表盘首页。
 
-**设计说明**：关键指标区域 + 图表区域，采用卡片式布局作为基础容器，通过标题、数值、辅助文本的层级结构呈现核心指标，支持基础交互如悬停反馈。
+**设计说明**：关键指标区域 + 图表区域，采用卡片式布局作为基础容器，通过标题、数值、辅助文本的层级结构呈现核心指标，支持基础交互如悬停反馈。仅展示**一个**核心指标；若多个同级指标都需要数值与 mini chart，改用 [嵌套指标卡](#5-嵌套指标卡-nested-statistic-cards)，选型对比见上文 [指标卡形态对比（含 mini chart）](#指标卡形态对比含-mini-chart)。
 
 **约束**：
 
 - 使用数值统计配置 `statistic` 和 `chart` 完成基本的指标卡
 - `statistic` 中通过 `value`、`prefix`、`description` 组织核心数值与辅助信息
-- `chart` 区域放置内嵌迷你图表，遵循上文「指标卡内嵌迷你图表」的容器对齐、plot padding 与配色规则
+- `chart` 区域放置内嵌迷你图表，遵循上文「指标卡内嵌迷你图表」的容器对齐、plot padding 与配色规则；模板默认使用 `MiniAreaSparkline` SVG 组件（72px 高度、同色面积填充 `8% → 22%`），不得使用 `<img>` 占位图
 - 组件来自 `@ant-design/pro-components` 的 `StatisticCard`
+- 禁止使用普通 `Card + div/span` 手写基础指标卡结构，避免与 `ds-statistic-card` 的 Pro `StatisticCard` 样式规则冲突，导致标题、主数值、辅助指标和 mini chart 横向挤压
+- 标题行右侧如有操作图标（如 `EllipsisOutlined`），须与指标名称一并放入 `statistic.title` 同一行（`flex` + `space-between`），**禁止**单独使用 `StatisticCard` / ProCard 的 `extra`；单独 `extra` 会生成空的 `.ant-pro-card-header`，导致左上角留白并与 body 顶部 padding 叠加
+- 基础指标卡标题行表达**卡片标题**（如「部门一」），不是 14px 指标字段名：使用 `ds-card-title-row` + `ds-table-title`（`16px / 24px / 600`、`colorText`），跳转箭头与 `⋯` 跟标题同一行；核心指标本身由主数值 + `description` 承担，不要把卡片标题降格为 `StatisticCard.statistic.title` 的字段标签样式
+- 基础指标卡纵向节奏属于图表模板规则，**写在本文档并由 `01-BasicStatisticCard.tsx` 模板落地**；不要写入 `global-style.css`。`global-style.css` 中的 `.ds-statistic-card` 只承担各类指标卡共用的外观（投影、body 16/24 padding、标题/主数值 typography 等）
+
+**纵向节奏（基础指标卡）**
+
+| 间距 | 值 | Token / 落地方式 |
+| :-- | :-- | :-- |
+| 卡片内容区上下 | 16px | 继承 `global-style.css` `.ds-statistic-card` body `padding-block: var(--padding)` |
+| 卡片内容区左右 | 24px | 继承 `global-style.css` `.ds-statistic-card` body `padding-inline: var(--nav-space-6)` |
+| 标题 → 主数值 | 8px | 继承 `global-style.css` `.ant-statistic-title { margin-bottom: var(--nav-space-2) }` |
+| 主数值 → 辅助说明 | **8px** | 模板内 `description` 外包一层容器，`marginTop: token.marginXS` |
+| 辅助说明 → mini chart | **16px** | 模板内 `chart` 容器 `marginTop: token.margin`，`marginBottom: 0` |
+| mini chart → 卡片底边 | 16px | 仅由 body 下内边距承担；图表区不得再叠加 bottom margin / padding |
+
+- 辅助说明两项之间的横向间距：模板内 `Space size={20}` 或等价 `gap: 20px`
+- 标题行「指标名 + 跳转图标」间距：模板内 `Space size={8}`
 
 **代码模板**：`scripts/charts/01-BasicStatisticCard.tsx`
 
@@ -385,7 +440,8 @@ PageShell
 - 多个独立卡片通过 Grid 或 Flex 组织，直接落在页面内容区背景（`var(--nav-color-bg-canvas)`）上；**不得**再套一层外层 Card、白色容器或大背景块包裹整组指标卡
 - 卡片间距（组内）：Grid `gap` 使用 `token.marginSM`（12px）或 `var(--margin-sm)`；**同级指标卡之间应略紧**，避免与下方主内容区块的间距混淆
 - 指标卡组与下方主图表 / 表格 / 列表等区块：使用 `layout.md` 同级业务区块间距 `var(--nav-space-4)`（16px），不得与组内 `gap` 同值导致「组内反而更疏」
-- 3–4 张时宽屏默认等分（如 `repeat(4, minmax(0, 1fr))`）；1–2 张时使用 `repeat(auto-fit, minmax(260px, 320px))` 并 `justifyContent: 'start'`，禁止单张卡拉满整行；窄屏（如 < 596px）切换为单列堆叠
+- 默认代码模板可展示 4 张同级指标卡，但真实生成必须按指标数量自适应：1–2 张使用 `repeat(auto-fit, minmax(260px, 320px))` 并 `justifyContent: 'start'`，禁止单张 / 少量卡片拉满整行；3–4 张按实际数量等分（如 `repeat(items.length, minmax(0, 1fr))`）；5 张及以上宽屏最多 4 列并自动换行；窄屏（如 < 596px）切换为单列堆叠
+- 自适应列数应写在当前模板 / 当前组件的局部 Grid 逻辑中（如 `getStatisticGridColumns(items.length, responsive)`），不要放进 `global-style.css`；`global-style.css` 只承担卡片外观、body padding、标题 / 数值字号等通用样式
 - 外层 Grid 必须设置 `alignItems: 'stretch'`；每个 `StatisticCard` 设置 `bordered={false}`、`width: 100%`、`height: 100%`；**禁止**为纯数值同级卡设置统一 `minHeight`（改由 `ds-statistic-card` 垂直居中）；卡片圆角、背景、投影、无描边和 body padding 由 `ds-statistic-card` 统一承担，不得依赖 antd / ProCard 默认样式，也不得在单卡上额外硬编码 `boxShadow`、`--shadow`、`bodyStyle.padding` 或其它外观值覆盖
 - 若同级指标卡中任何一项需要辅助说明（如「截至当前班次」），整组指标卡都必须通过 `description` / 占位容器预留同等高度；禁止只有单张卡出现第二行辅助说明
 - 同级指标卡必须加 `className="ds-statistic-card"` 或等效样式，确保标题、数值、单位左对齐；带图标指标卡的图标不能影响文字列起点
@@ -440,18 +496,19 @@ PageShell
 
 > **适用场景**：适用于多个同级指标需要同时展示数值与趋势图表的场景，如多维度监控面板、多指标对比看板。
 
-**设计说明**：嵌套指标卡不是把多个指标合并进一个 `StatisticCard.Group` 大卡，而是多个独立 `StatisticCard` 以同级指标卡的 Grid / Flex 方式排列。它与同级指标卡的区别只在单卡内部：每张卡同时包含 `statistic` 和受限高度的 mini chart，形成「数值在上、趋势图在下」的上下结构。适合在概览区用小趋势辅助判断，不适合承载完整趋势分析。
+**设计说明**：嵌套指标卡不是把多个指标合并进一个 `StatisticCard.Group` 大卡，而是多个独立 `StatisticCard` 以同级指标卡的 Grid / Flex 方式排列。它与同级指标卡的区别只在单卡内部：每张卡同时包含 `statistic` 和受限高度的 mini chart，形成「数值在上、趋势图在下」的上下结构。它与基础指标卡的区别在于卡片数量与信息密度：基础指标卡只承载**一个**重点指标且可带更丰富的辅助说明；嵌套指标卡用于**多个**同级指标并排监控。完整对比见上文 [指标卡形态对比（含 mini chart）](#指标卡形态对比含-mini-chart)。适合在概览区用小趋势辅助判断，不适合承载完整趋势分析。
 
 **约束**：
 
-- 多个嵌套指标卡必须使用局部 Grid / Flex 排列，直接落在页面内容区背景（`var(--nav-color-bg-canvas)`）上；外层布局写在当前模板 / 当前组件内即可，**不要求新增 `global-style.css` 类**
+- 多个嵌套指标卡必须使用局部 Grid / Flex 排列，直接落在页面内容区背景（`var(--nav-color-bg-canvas)`）上；外层响应式列数写在当前模板 / 当前组件内，**不要**放进 `global-style.css`
 - 禁止使用 `StatisticCard.Group` 承载整组嵌套指标卡；禁止使用 `Divider` 表达卡间分隔；禁止再套一层外层 Card、白色容器或大背景块包裹整组嵌套指标卡
-- 2–4 张时宽屏默认横向等分（如 `repeat(3, minmax(0, 1fr))`）；1–2 张时使用 `repeat(auto-fit, minmax(260px, 320px))` 并 `justifyContent: 'start'`，禁止单张 / 少量嵌套指标卡无业务主图表语义时拉满整行；窄屏（如 < 596px）切换为单列堆叠
+- 默认代码模板可展示 4 张嵌套指标卡，但真实生成必须按指标数量自适应：1–2 张使用 `repeat(auto-fit, minmax(260px, 320px))` 并 `justifyContent: 'start'`，禁止单张 / 少量嵌套指标卡无业务主图表语义时拉满整行；3–4 张按实际数量等分；5 张及以上宽屏最多 4 列并自动换行；窄屏（如 < 596px）切换为单列堆叠
 - 外层 Grid 必须设置 `alignItems: 'stretch'`；每个 `StatisticCard` 设置 `bordered={false}`、`width: 100%`、`height: 100%`；卡片间距（组内）与同级指标卡一致，Grid `gap` 使用 `token.marginSM`（12px）或 `var(--margin-sm)`
-- 每张嵌套指标卡都是独立 `StatisticCard`，必须加 `className="ds-statistic-card"` 或等效样式，白底、圆角、投影、无描边和 body padding 由 `ds-statistic-card` 统一承担
-- 每个指标卡同时配置 `statistic` 和 `chart`，图表位于数值下方；同一组嵌套指标卡必须使用相同信息槽位，避免单卡因说明行、图表高度或 padding 不一致导致底边不齐
-- `chart` 只允许作为内嵌迷你图表使用，高度建议 56–96px，最大不超过 120px；不得展示完整坐标轴、图例、复杂 tooltip、告警线或长时间序列分析
+- 每张嵌套指标卡都是独立 `StatisticCard`，必须加 `className="ds-statistic-card ds-nested-statistic-card"` 或等效样式，白底、圆角、投影、无描边和 body padding 由 `ds-statistic-card` 统一承担，标题 / 数值 / mini chart 的纵向布局由 `ds-nested-statistic-card` 承担
+- 每个指标卡同时配置 `statistic` 和 `chart`，图表位于数值下方；同一组嵌套指标卡必须使用相同信息槽位，避免单卡因说明行、图表高度或 padding 不一致导致底边不齐。推荐间距：卡片内容上边距 16px、左右 24px；标题到数值 8px；数值到图表 16px；图表到底部 24px
+- `chart` 只允许作为内嵌迷你图表使用，高度建议固定为 72px（可在 56–96px 内按场景微调，最大不超过 120px）；不得展示完整坐标轴、图例、复杂 tooltip、告警线或长时间序列分析
 - 嵌套指标卡 `chart` 的配色须遵循上文「指标卡内嵌迷你图表配色（通用）」；每张卡绑定独立 `semanticColor`，禁止多张卡共用默认蓝色填充
+- 同一组嵌套指标卡中的趋势类 mini chart 优先使用带同色面积填充的面积图；除非业务明确需要对比形态，否则不要在同组内混用“有面积填充的折线”和“无面积填充的折线”，避免视觉不一致。柱状 mini chart 可用于离散区间 / 资源桶类指标，但柱宽须收窄并保持轻量
 - 若每个指标都需要全宽趋势图、独立坐标轴、图例、告警线、长时间范围或完整 hover tooltip，则不应使用嵌套指标卡，应升级为 OnlyCharts / 图表 Grid / 监控趋势图 Card
 - 禁止多个嵌套指标卡默认纵向全宽堆叠；禁止把嵌套指标卡生成成「多条全宽监控图列表」
 - 支持 `precision`（小数位数）和 `suffix`（单位后缀）精确控制数值展示
@@ -486,7 +543,7 @@ PageShell
 **Tab 等分规则**：
 
 - 各 Tab 等分均分（`flex: 1`），宽度一致，不因数值长短差异导致宽窄不一
-- Tabs nav list 必须撑满容器宽度，`ant-tabs-tab`、`ant-tabs-tab-btn` 和 `.ds-statistic-tab-label` 都按 100% 宽度承接；`ant-tabs-tab` 不得保留额外左右 padding，Tabs 卡片 body 横向 padding 建议为 0，由 `.ds-statistic-tab-label` 自己提供左右 24px 内边距；第一项总计标题文字必须距离整张卡片最左侧 24px，同时在 active Tab 单元内也保持 24px 左内距；总计项如需分割线，分割线只能用绝对定位伪元素绘制，不得通过额外 padding 或独立宽度破坏等分
+- Tabs nav list 必须撑满容器宽度，`ant-tabs-tab`、`ant-tabs-tab-btn` 和 `.ds-statistic-tab-label` 都按 100% 宽度承接；`ant-tabs-tab` 不得保留额外左右 padding 或相邻 Tab 默认间距（须清零 `.ant-tabs-tab + .ant-tabs-tab` 的 `margin-inline-start` / `margin-left`），否则选中第二项及之后 Tab 时 active ink bar 会与总计项分割线之间出现空隙；Tabs 卡片 body 横向 padding 建议为 0，由 `.ds-statistic-tab-label` 自己提供左右 24px 内边距；第一项总计标题文字必须距离整张卡片最左侧 24px，同时在 active Tab 单元内也保持 24px 左内距；总计项如需分割线，分割线只能用绝对定位伪元素绘制，不得通过额外 padding 或独立宽度破坏等分
 - `.ds-statistic-tab-label` 必须保留底部内距（建议 `padding-block-end: var(--padding)`），使状态 Tag / 主数值到底部 ink bar 的距离与卡片 body 顶部到标题的距离一致；不要通过给 ProCard body 增加底部 padding 来修正，否则 active ink bar 会离开页签指标卡底边
 - active ink bar 表达的是当前 Tab 单元，不是文字内容选中线；ink bar 应覆盖当前等分 Tab 单元底部，从 Tab 单元左边界开始，不需要再为状态点或标题文字额外留空隙，也不得缩到文字宽度或跟随状态点偏移；文字的 24px 对齐线由 label 内边距保证
 - 数值短的 Tab 右侧自然留白，数值长的 Tab 内容单行不换行，不撑宽 Tab
@@ -495,16 +552,16 @@ PageShell
 **Tab 底部收口**：
 
 - 页签联动指标卡的联动内容已外置为独立区块时，Tabs 默认底部分割线必须去掉（`.ant-tabs-nav::before { border-bottom: 0 }`）
-- Tabs nav 到卡片底部不得再保留默认 `margin-bottom` 或 ProCard body 底部 padding；active ink bar 应贴在该指标卡区块底部；内容到 ink bar 的底部距离由 label 内部 `padding-block-end` 承担
+- Tabs nav 到页签指标卡底边不得再保留默认 `margin-bottom`、`.ant-pro-card-tabs` 底部 padding、空的 content holder / content / tabpane 高度；active ink bar 应贴在该指标卡白色卡片底边；内容到 ink bar 的底部距离由 label 内部 `padding-block-end` 承担
 
 **关联展示内容外置**：
 
 - 页签联动指标卡是一块独立的卡片区块，只展示 Tab + 指标数值
 - **禁止**在 `tabs.children` 中放置业务内容；`children` 须设为 `null`
-- 关联展示内容（图表、表格、列表等）在卡片外部作为 `.ds-page-shell` 的独立子区块，由 `gap: var(--nav-space-4)`（16px）统一承担间距
-- 若联动内容本身包含一组指标卡、图表卡或明细卡，使用 `className="ds-statistic-linked-content"` 或等价结构组织；联动内容区与页签指标卡之间、联动内容内部各业务卡之间都必须保留 16px，禁止 `marginTop: 0`、负 margin、绝对定位或把下方卡片嵌进 `.ds-statistic-tabs` 内造成贴边
-- 关联展示内容卡片必须自身承担完整白卡边界和内容区留白，标题 / 图表占位 / 表格 / 列表都应共享同一 24px 左右对齐线；若使用 `ProCard`，优先把「关联展示内容 - 当前维度」标题放在 `body` 内作为普通标题行，不使用 `title` / header 造成 header padding 与 body padding 两套对齐线
-- 关联展示内容中的示意图表 / 占位块必须放在卡片 body 的内容区内，并与标题保持 16px 间距；禁止让占位块贴住卡片左 / 右 / 底边，禁止通过负 margin 或 `height: 100%` 撑破卡片内容留白
+- 关联展示内容（图表、表格、列表等）在卡片外部作为 `.ds-page-shell` 的独立子区块，由 `gap: var(--nav-space-4)`（16px）统一承担页签指标卡与下方联动模块之间的区块间距
+- 若联动内容本身包含一组指标卡、图表卡或明细卡，使用 `className="ds-statistic-linked-content"` 或等价结构组织；联动内容区与页签指标卡之间、联动内容内部各业务卡之间都必须保留 16px，禁止负 margin、绝对定位或把下方卡片嵌进 `.ds-statistic-tabs` 内造成结构混乱
+- 关联展示内容卡片必须自身承担完整白卡边界和内容区留白，标题 / 关联图表 / 表格 / 列表都应共享同一 24px 左右对齐线；若使用 `ProCard`，优先把「关联展示内容 - 当前维度」标题放在 `body` 内作为普通标题行，不使用 `title` / header 造成 header padding 与 body padding 两套对齐线
+- 关联展示内容中的图表须放在卡片 body 的内容区内，使用 `@ant-design/charts` 渲染（模板默认 `Area`，随 `activeKey` 切换数据），并与标题保持 16px 间距；禁止用灰色示意块、文字占位或 `<img>` 代替真实图表；禁止让图表贴住卡片左 / 右 / 底边，禁止通过负 margin 或 `height: 100%` 撑破卡片内容留白
 - Tab 切换通过受控 `activeKey` 驱动页面层条件渲染下方区块
 
 **代码模板**：`scripts/charts/05-TabsStatisticCard.tsx`

@@ -9,9 +9,11 @@ const cardStyle: CSSProperties = {
   height: '100%',
 };
 
-/** Ant Design Charts 面积类填充渐变配置参考：上浅下深，同色派生；具体字段以项目 Charts 版本文档为准。 */
-const getMiniChartFillGradient = (color: string) =>
-  `l(90) 0:color-mix(in srgb, ${color} 12%, transparent) 1:color-mix(in srgb, ${color} 32%, transparent)`;
+const getStatisticGridColumns = (count: number, responsive: boolean) => {
+  if (responsive) return '1fr';
+  if (count <= 2) return 'repeat(auto-fit, minmax(260px, 320px))';
+  return `repeat(${Math.min(count, 4)}, minmax(0, 1fr))`;
+};
 
 type MiniChartType = 'area' | 'line' | 'column';
 
@@ -55,14 +57,15 @@ function MiniAreaSparkline({
     <svg
       className="ds-statistic-mini-chart"
       viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
       width="100%"
       height={height}
       aria-hidden
     >
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity={0.12} />
-          <stop offset="100%" stopColor={color} stopOpacity={0.32} />
+          <stop offset="0%" stopColor={color} stopOpacity={0.08} />
+          <stop offset="100%" stopColor={color} stopOpacity={0.22} />
         </linearGradient>
       </defs>
       <path d={areaPath} fill={`url(#${gradientId})`} />
@@ -88,6 +91,7 @@ function MiniLineSparkline({ color, series }: { color: string; series: number[] 
     <svg
       className="ds-statistic-mini-chart"
       viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
       width="100%"
       height={height}
       aria-hidden
@@ -101,21 +105,22 @@ function MiniColumnSparkline({ color, series }: { color: string; series: number[
   const width = 240;
   const height = 72;
   const padding = 2;
-  const gap = 4;
   const max = Math.max(...series) || 1;
-  const barWidth = (width - padding * 2 - gap * (series.length - 1)) / series.length;
+  const slotWidth = (width - padding * 2) / series.length;
+  const barWidth = Math.min(14, slotWidth * 0.48);
 
   return (
     <svg
       className="ds-statistic-mini-chart"
       viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
       width="100%"
       height={height}
       aria-hidden
     >
       {series.map((value, index) => {
         const barHeight = Math.max(4, (value / max) * (height - padding * 2));
-        const x = padding + index * (barWidth + gap);
+        const x = padding + index * slotWidth + (slotWidth - barWidth) / 2;
         const y = height - padding - barHeight;
 
         return (
@@ -158,7 +163,7 @@ export default () => {
       precision: 1,
       suffix: '%',
       semanticColor: token.colorSuccess,
-      chartType: 'line',
+      chartType: 'area',
       series: [68, 70, 69, 72, 71, 73, 74.2],
     },
     {
@@ -170,6 +175,16 @@ export default () => {
       semanticColor: token.colorWarning,
       chartType: 'column',
       series: [57, 58, 59, 60, 60.5, 61, 61.8],
+    },
+    {
+      key: 'network',
+      title: '网络吞吐',
+      value: 128.6,
+      precision: 1,
+      suffix: 'Mbps',
+      semanticColor: token.colorError,
+      chartType: 'area',
+      series: [96, 108, 102, 118, 112, 124, 128.6],
     },
   ];
 
@@ -202,9 +217,10 @@ export default () => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: responsive ? '1fr' : `repeat(${items.length}, minmax(0, 1fr))`,
+          gridTemplateColumns: getStatisticGridColumns(items.length, responsive),
           gap: token.marginSM,
           alignItems: 'stretch',
+          justifyContent: !responsive && items.length <= 2 ? 'start' : 'stretch',
           width: '100%',
           background: 'transparent',
         }}
@@ -212,7 +228,7 @@ export default () => {
         {items.map((item) => (
           <StatisticCard
             key={item.key}
-            className="ds-statistic-card"
+            className="ds-statistic-card ds-nested-statistic-card"
             bordered={false}
             style={cardStyle}
             statistic={{
@@ -230,4 +246,3 @@ export default () => {
   );
 };
 
-export { getMiniChartFillGradient };

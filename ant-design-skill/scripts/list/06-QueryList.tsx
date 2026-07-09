@@ -1,7 +1,7 @@
 /**
  * QueryList —— 查询列表（Query List）
  *
- * 基于 AntDesign5.0_Skill 的「PageHeader 外置 + 双卡分组」规范实现：
+ * 按查询列表「PageHeader 外置 + 双卡分组」规范实现：
  * - PageHeader（标题 + 操作按钮组）：位于所有 Card 外部
  * - 搜索卡：搜索条件 + 操作按钮
  * - 列表卡：结果标题 + 结果级操作 + 列表条目 + 分页（内部用 <Divider/> 分隔列表与分页栏）
@@ -14,7 +14,9 @@
 
 import '../../references/global-style.css';
 import { useState } from 'react';
-import { List, Tag, Button, Avatar, Input, Select, Pagination, Card, Divider, Space } from 'antd';
+import { List, Tag, Button, Avatar, Input, Select, Pagination, Card, Divider, Space, Typography } from 'antd';
+
+const { Title, Text } = Typography;
 
 const statusMap = {
   active: { text: '进行中', color: 'success' },
@@ -75,22 +77,15 @@ export default function QueryList() {
     <div className="ds-page-shell">
       {/* === 1. PageHeader（位于主内容 Card 外部） === */}
       <div className="ds-page-header">
-        <div>
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 600,
-              color: 'var(--nav-color-text-active)',
-              marginBottom: 4,
-            }}
-          >
+        <Space direction="vertical" size={4}>
+          <Title level={4} className="ds-page-title">
             查询列表
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--nav-color-text-secondary)' }}>
+          </Title>
+          <Text type="secondary">
             设置多个筛选条件，一次性提交查询，精准筛选目标数据。
-          </div>
-        </div>
-        <Space size="small">
+          </Text>
+        </Space>
+        <Space className="ds-page-header-extra" size="small">
           <Button onClick={handleReset}>
             重置
           </Button>

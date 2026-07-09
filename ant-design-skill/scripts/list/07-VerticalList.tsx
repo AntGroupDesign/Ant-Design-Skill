@@ -11,13 +11,6 @@ const verticalListData = [
 export default function VerticalList() {
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>7. 竖排样式列表（Vertical List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-          侧重内容丰富度，大量信息全量呈现，引导用户按阅读顺序浏览，适用于运营类场景。
-        </p>
-      </div>
-
       <List
         header={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -3,12 +3,12 @@ import {
   ProFormText,
   QueryFilter,
 } from '@ant-design/pro-components';
-import { Col, Space } from 'antd';
+import { Card, Col, Space } from 'antd';
 import '../../references/global-style.css';
 
 export default function QueryFilterPlayground() {
   return (
-    <div style={{ padding: 'var(--space-xxxl)' }}>
+    <Card bordered={false} className="ds-search-panel ds-form-panel">
       <QueryFilter
         defaultCollapsed
         defaultFormItemsNumber={5}
@@ -33,6 +33,6 @@ export default function QueryFilterPlayground() {
         <ProFormText name="owner" label="负责人" width="md" />
         <ProFormText name="region" label="所在区域" width="md" />
       </QueryFilter>
-    </div>
+    </Card>
   );
 }

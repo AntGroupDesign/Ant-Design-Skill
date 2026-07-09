@@ -22,7 +22,7 @@
 
 > **页面说明提示条**：默认不生成；仅当用户明确要求，或保存范围、字段联动、步骤校验、生效时机容易误解时，才引用 [`layout.md` §页面说明提示条](layout.md#页面说明提示条)。
 
-> **表单间距边界**：表单外层 PagePanel / `ds-page-card` 可遵循页面级白卡外圈 16 / 24 规则；表单内部字段、`Form.Item` 间距、按钮区、`StepsForm` 步骤条、左右分栏、嵌入表单弱分组、`QueryFilter` 字段栅格与 submitter 均按本文件表单专属规则执行，禁止套用列表 / 表格 / 指标 / 描述卡的内容线规则。
+> **表单间距边界**：基础表单、嵌入模式表单、筛选表单的外层白卡使用 `ds-form-panel`，上下左右统一 **24px**（`var(--nav-space-6)`）；其余页面级内容卡仍遵循通用 16 / 24 规则。表单内部字段、`Form.Item` 间距、按钮区、`StepsForm` 步骤条、左右分栏、嵌入表单弱分组、`QueryFilter` 字段栅格与 submitter 均按本文件表单专属规则执行，禁止套用列表 / 表格 / 指标 / 描述卡的内容线规则。
 
 ### 操作按钮位置
 按钮顺序固定为：左侧次操作（取消 / 重置）→ 右侧主操作（确认 / 提交 / 发布）。按钮对齐方式按场景区分：
@@ -247,7 +247,9 @@ render: (_, record) => (
 + `layout` 固定为 `"vertical"`，禁止在此场景使用 `horizontal` 或 `inline`
 + 输入组件宽度优先使用 ProForm `width` 枚举（如 `width="md"`），非 ProForm 组件使用 `style={{ width: Npx }}` 固定像素值，**禁止用百分比**
 + `Select` 使用 `options` 属性传入选项，禁止使用 `<Option>` 子组件写法
++ 按钮区与最后一个字段间距 **24px**（`margin-top: var(--nav-space-6)`）；白卡底边 24px 由外层 `ds-form-panel` 唯一承担，**禁止**在 `submitter.render` 内再写 `paddingBottom: 72` 等额外底留白
 + 按钮区规则见上方"表单类共性规则"
++ 独立页面或主内容区中的基础表单必须放在白色 PagePanel 内，外层使用 `className="ds-page-card ds-form-panel"` 或等效白色内容容器承担背景、圆角、阴影与 **24px 四边内边距**；禁止直接浮在页面灰色背景上
 
 **代码模板**：`scripts/form/01-BasicForm.tsx`
 
@@ -334,6 +336,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel（ds-page-
 + 导入来源固定为 `@ant-design/pro-components`，禁止替换为其他库
 + 使用 `BetaSchemaForm` 配合 `layoutType="Embed"` 渲染嵌入模式表单，表单内嵌在页面区域中，不弹窗不抽屉
 + 多个嵌入表单可组合在同一个 `ProForm` 容器内，统一提交
++ 嵌入模式表单作为页面主内容时，外层必须使用 `className="ds-page-card ds-form-panel"` 或等效白色内容容器承担页面级白卡背景、圆角、阴影与 **24px 四边内边距**；内部弱分组再使用描边区块表达语义分组
 + 列定义使用 `ProFormColumnsType` 类型，通过 `columns` 属性配置字段、校验规则与值枚举
 + `valueType: 'group'` 用于字段分组，分组内通过 `columns` 嵌套子字段
 + 状态字段使用 `valueEnum` 配置，禁止在 `render` 中手写 Tag 颜色逻辑
@@ -389,7 +392,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel（ds-page-
 `QueryFilter` 是筛选表单组件本体，不是页面白卡容器；复杂筛选须由搜索卡承载：
 
 ```tsx
-<Card bordered={false} className="ds-search-panel">
+<Card bordered={false} className="ds-search-panel ds-form-panel">
   <QueryFilter {...queryFilterProps} />
 </Card>
 ```
@@ -406,7 +409,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel（ds-page-
 + 展开收起使用线性图标（`DownOutlined` / `UpOutlined`），禁止使用实心图标
 + 按钮区域（重置/查询/展开收起）通过 `submitter.render` 自定义，使用 `Col flex="auto"` + `justifyContent: 'flex-end'` 实现与内容区右边界对齐
 + 输入组件默认使用 M 宽度（`width="md"`），筛选字段宽度统一
-+ `QueryFilter` 必须放在搜索卡容器 `<Card bordered={false} className="ds-search-panel">` 内；搜索卡负责白卡外观与 Card body padding（上下 `var(--nav-space-5)`、左右 `var(--nav-space-6)`），`QueryFilter` 只负责字段布局、展开收起与提交行为。禁止再写 `padding: 72`、额外 Card body padding，或让 `QueryFilter` 自己承担白卡外壳。字段行列间距由 `searchGutter={[24, 16]}` 控制
++ `QueryFilter` 必须放在搜索卡容器 `<Card bordered={false} className="ds-search-panel ds-form-panel">` 内；搜索卡负责白卡外观与 Card body **24px 四边 padding**，`QueryFilter` 只负责字段布局、展开收起与提交行为。`QueryFilter` 组件默认自带 `padding: 24px`，在搜索卡内须由 `global-style.css` 清零（`.ds-search-panel .ant-pro-query-filter { padding: 0 }`），禁止与 Card body 叠加成双倍留白。禁止再写 `padding: 72`、额外 Card body padding，或让 `QueryFilter` 自己承担白卡外壳。字段行列间距由 `searchGutter={[24, 16]}` 控制
 
 **代码模板**：`scripts/form/05-QueryFilter.tsx`
 
@@ -434,7 +437,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel（ds-page-
 
 ## 6. 登录表单 (Login Form)
 
-> **适用场景**：为适应常见的登录表单布局来专门实现，适用于各类登录场景，降低布局的压力。
+> **适用场景**：为适应常见的登录表单布局来专门实现，适用于各类登录场景，降低布局的压力。登录页是**独立认证页**，不在导航布局 `<Content>` 的 24px 内容区内，**禁止**套用 `ds-form-panel` 或业务表单 PageHeader 规则。
 
 **约束**：
 
@@ -447,5 +450,71 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel（ds-page-
 + 第三方登录图标使用 `@ant-design/icons`，样式通过 `theme.useToken()` 获取 Token 变量，禁止硬编码颜色
 + 密码强度展示使用 Token 语义颜色（`token.colorSuccess` / `token.colorWarning` / `token.colorError`），禁止写死 hex 值
 + `ProConfigProvider hashed={false}` 包裹以禁用样式哈希，避免与全局样式冲突
+
+#### 页面布局（登录页壳层 + 登录面板）
+
+登录页分两层，**规则写在本文档 + 模板结构**，不新增 `global-style.css` 工具类：
+
+| 层级 | 语义 class | 职责 |
+| :-- | :-- | :-- |
+| 页面壳层 | `ds-login-page` | 视口内**上下居中**；上下最小间距 **`var(--nav-space-6)`（24px）**；页面背景 `var(--color-bg-layout)` |
+| 登录面板 | `ds-page-card` + `ds-login-panel` | 白底、**8px 圆角**、`var(--shadow)`；**不叠** `ds-form-panel`；外层 `padding: 0`、`overflow: hidden`、`borderRadius`；内层通过 `LoginForm` 的 `containerStyle` 同步圆角 |
+
+**默认页面壳层写法**：
+
+```tsx
+<div
+  className="ds-login-page"
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    paddingBlock: 'var(--nav-space-6)',
+    paddingInline: 'var(--nav-space-6)',
+    boxSizing: 'border-box',
+    background: 'var(--color-bg-layout)',
+  }}
+>
+  <div
+    className="ds-page-card ds-login-panel"
+    style={{
+      width: '100%',
+      maxWidth: 580,
+      padding: 0,
+      overflow: 'hidden',
+      borderRadius: 'var(--border-radius-lg)',
+    }}
+  >
+    <LoginForm
+      containerStyle={{
+        height: 'auto',
+        overflow: 'hidden',
+        borderRadius: 'var(--border-radius-lg)',
+        background: 'var(--color-bg-container)',
+      }}
+      {...props}
+    />
+  </div>
+</div>
+```
+
++ `LoginForm` 默认 `container` 为 `height: 100%` 且内层为方形容器；外层 `ds-login-panel` 与 `containerStyle` **双层**传 `overflow: hidden`、`borderRadius: var(--border-radius-lg)`、`background: var(--color-bg-container)`，禁止仅依赖外层 `ds-page-card` 圆角
++ 登录面板最大宽度默认 **580px**，与 Pro `LoginForm` main 区一致；窄屏下 `width: 100%` 自适应
+
+#### 业务场景可搭配（文档约定，非硬编码）
+
+| 场景 | 说明 |
+| :-- | :-- |
+| 居中单卡（默认） | 仅 `ds-login-page` + `ds-login-panel`，见上节 |
+| 左右分栏 | 页面壳层改为 Grid / Flex 双列：左侧品牌 / 插图，右侧保留 `ds-login-panel`；上下仍保留最小 24px |
+| 全屏背景 | 在 `ds-login-page` 上叠加背景图 / 渐变；登录面板仍用 `ds-page-card` 白卡 |
+| 内嵌现有后台 | 少数场景可放进 Layout，但仍不使用 `ds-form-panel`；居中与最小间距由业务容器承担 |
+
+**禁止**：
+
++ 只用 inline 白底铺满视口、不做圆角面板（会与 Skill 白卡规范不一致）
++ 给登录面板叠 `ds-form-panel`（那是业务表单内容区规则）
++ 省略 `containerStyle={{ height: 'auto' }}` 导致 LoginForm 默认全屏高度破坏面板布局
 
 **代码模板**：`scripts/form/06-LoginForm.tsx`

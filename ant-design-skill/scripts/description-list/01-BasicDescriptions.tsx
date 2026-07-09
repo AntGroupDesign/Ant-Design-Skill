@@ -2,6 +2,7 @@ import React from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Tag } from 'antd';
 import type { DescriptionsProps } from 'antd';
+import '../../references/global-style.css';
 
 const items: DescriptionsProps['items'] = [
   {
@@ -55,12 +56,14 @@ const items: DescriptionsProps['items'] = [
 ];
 
 const BasicDescriptions: React.FC = () => (
-  <Descriptions
-    className="ds-descriptions"
-    title="项目信息"
-    column={3} /* 字段多时用 3 列，少时改为 2 */
-    items={items}
-  />
+  <div className="ds-page-card">
+    <Descriptions
+      className="ds-descriptions"
+      title="项目信息"
+      column={3} /* 字段多时用 3 列，少时改为 2 */
+      items={items}
+    />
+  </div>
 );
 
 export default BasicDescriptions;

@@ -42,13 +42,6 @@ export default function EditList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>2. 编辑列表（Edit List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-tertiary)', margin: 0 }}>
-          包含基础信息呈现和编辑功能，可在浏览信息的同时即时修改列表属性，支持保存/删除/取消操作。
-        </p>
-      </div>
-
       <List
         header={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0' }}>

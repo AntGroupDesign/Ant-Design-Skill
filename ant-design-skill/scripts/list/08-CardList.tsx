@@ -29,13 +29,6 @@ export default function CardList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>8. 卡片列表（Card List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-tertiary)', margin: 0 }}>
-          网格布局卡片样式展示，每个对象拥有平等的展示机会，突出对象本身，支持点击和选中。
-        </p>
-      </div>
-
       <div className="ds-list-card">
         <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16 }}>
           <span style={{ fontSize: 16, fontWeight: 500 }}>卡片列表</span>

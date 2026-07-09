@@ -7,6 +7,7 @@ import { Button, Card, Descriptions, Flex } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import type { CSSProperties } from 'react';
 import React from 'react';
+import '../../references/global-style.css';
 
 /** 分组 Card 内容区遵循页面级白卡 16/24；标题区只承担标题顶部与水平对齐 */
 export const descriptionGroupCardStyles = {
@@ -67,6 +68,7 @@ const orgItems: DescriptionsProps['items'] = [
 const GroupedCardDescriptions: React.FC = () => (
   <Flex vertical gap={16 /* --margin */}>
     <Card
+      className="ds-page-card"
       title="项目信息"
       bordered={false}
       style={descriptionGroupCardStyle}
@@ -75,6 +77,7 @@ const GroupedCardDescriptions: React.FC = () => (
       <Descriptions className="ds-descriptions" column={2} items={accountItems} />
     </Card>
     <Card
+      className="ds-page-card"
       title="服务配置"
       bordered={false}
       style={descriptionGroupCardStyle}

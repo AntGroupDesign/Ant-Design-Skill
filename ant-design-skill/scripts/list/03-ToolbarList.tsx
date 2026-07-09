@@ -22,13 +22,6 @@ export default function ToolbarList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>3. 带工具栏的列表（List with Toolbar）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-tertiary)', margin: 0 }}>
-          提供集中操作区域，包含Tab标签分组、搜索、筛选、新建等操作，提升交互效率。
-        </p>
-      </div>
-
       <List
         header={
           <div className="toolbar-header ds-card-tab-strip">

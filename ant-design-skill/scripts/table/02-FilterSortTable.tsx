@@ -102,6 +102,9 @@ const data: DataType[] = [
 const App: React.FC = () => (
   <ConfigProvider theme={tableTheme}>
     <div className="ds-page-card ds-table-card-padded">
+      <div className="ds-card-title-row">
+        <span className="ds-table-title">用户筛选列表</span>
+      </div>
       <Table<DataType>
         tableLayout="fixed"
         columns={columns}

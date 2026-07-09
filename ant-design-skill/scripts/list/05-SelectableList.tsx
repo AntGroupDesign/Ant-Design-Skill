@@ -38,13 +38,6 @@ export default function SelectableList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>5. 支持选中的列表（Selectable List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-tertiary)', margin: 0 }}>
-          支持批量选中列表项，唤起批量操作，减少重复操作次数。
-        </p>
-      </div>
-
       <List
         header={
           <>

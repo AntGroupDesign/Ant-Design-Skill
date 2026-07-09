@@ -24,6 +24,8 @@
 
 > **页面说明提示条**：默认不生成；仅当用户明确要求，或存在非显而易见的业务规则 / 操作风险 / 生效时机时，才引用 [`layout.md` §页面说明提示条](layout.md#页面说明提示条)。
 
+> **模板纯净性**：`scripts/list/` 代码模板只渲染真实业务页面 / 组件内容，禁止把本 reference 的章节标题、英文组件名或「适用场景」说明文案作为页面内容输出。列表卡内如需标题，应使用真实业务标题（如「项目列表」「实验列表」）放在 `List.header`、卡内 toolbar 或页面标题区。
+
 ### 列表结构与布局
 
 列表类数据通常配合「数据过滤」、「列表工具栏」、「列表数据」、「分页器」一起出现，各个分区内的内容可以随意组合：
@@ -129,9 +131,9 @@
 
 #### PageHeader 标题行排版
 
-- 主标题：`fontSize: 20; fontWeight: 600; color: var(--nav-color-text-active); lineHeight: 1.4`
-- 副标题（注释/摘要等）：**与主标题同一行**，`alignItems: baseline` 横向并列，`fontSize: 13; color: var(--nav-color-text-tertiary)`；不另起一行，不放到面包屑下方
-- 主副标题外层容器：`display: flex; alignItems: baseline; gap: var(--nav-space-3); flexWrap: wrap`
+- 主标题：`<Title level={4} className="ds-page-title">`，字号 / 行高 / 颜色由 `.ds-page-header .ds-page-title` 提供（20px / 28px）；详见 [`layout.md` §页面主标题 typography](layout.md#带面包屑的页面标题区)
+- 副标题（页面用途 / 操作指引）：放在主标题**下方**独立第二行，使用 `<Text type="secondary">`；与主标题间距 4px（`Space direction="vertical" size={4}`）
+- 标题同行后缀（刷新口径等轻量元信息）：与主标题 baseline 对齐时使用 `ds-page-title-row` + `ds-page-title-suffix`，见 [`layout.md` §页面标题同行后缀](layout.md#页面标题同行后缀titlesuffix)
 
 #### PageHeader 操作组（右上角按钮组）
 
@@ -191,7 +193,7 @@
 - 工具栏下方禁止再额外设置 `margin-bottom` 或 `padding-bottom`，避免与第一条列表项的顶部 padding 叠加
 - 普通列表条目之间的分割线由 `.list-item-hover::after` 绘制，在 `ds-list-card` 内 `left/right: 0`（与内容同宽，不再内缩 24px）；表格式列表若行内另有 16px 单元格内边距，分割线仍铺满表格内容宽度
 - 分页区必须使用 `className="ds-list-pagination"` 或等价 `padding: var(--padding) 0`，承担「列表到分页 16px」与「分页到底部 16px」
-- 无分页列表必须保留底部 16px：使用 `.ds-list-bottom-spacer` 或由 `global-style.css` 的 `.ant-list.ds-list-card:not(:has(.ant-list-footer))` 兜底；禁止最后一条列表项贴到卡片底部
+- 无分页列表必须保留底部 16px：使用 `.ds-list-bottom-spacer`，或由 `global-style.css` 的 `.ant-list.ds-list-card:not(:has(.ant-list-footer))` / `.ant-list.list-surface-card:not(:has(.ant-list-footer))` 兜底；禁止最后一条列表项贴到卡片底部
 - 列表卡内嵌 Table 时：Table 首末列由 `global-style.css` 在 `.ds-list-card` 下自动保留 16px 单元格内部留白（等同 `ds-table-card-padded`），避免表头 / 行内容贴边
 
 **实现示例**（方案 B）：

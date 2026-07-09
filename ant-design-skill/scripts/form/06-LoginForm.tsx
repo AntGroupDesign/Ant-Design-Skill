@@ -35,13 +35,40 @@ export default function LoginFormPlayground() {
   };
 
   return (
-    <ProConfigProvider hashed={false}>
-      <div style={{ backgroundColor: token.colorBgContainer }}>
-        <LoginForm
-          className="login-form-panel"
-          style={{
-            '--input-height': '40px',
-          } as CSSProperties}
+    <div
+      className="ds-login-page"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        paddingBlock: 'var(--nav-space-6)',
+        paddingInline: 'var(--nav-space-6)',
+        boxSizing: 'border-box',
+        background: 'var(--color-bg-layout)',
+      }}
+    >
+      <div
+        className="ds-page-card ds-login-panel"
+        style={{
+          width: '100%',
+          maxWidth: 580,
+          padding: 0,
+          overflow: 'hidden',
+          borderRadius: 'var(--border-radius-lg)',
+        }}
+      >
+        <ProConfigProvider hashed={false}>
+          <LoginForm
+            containerStyle={{
+              height: 'auto',
+              overflow: 'hidden',
+              borderRadius: 'var(--border-radius-lg)',
+              background: 'var(--color-bg-container)',
+            }}
+            style={{
+              '--input-height': '40px',
+            } as CSSProperties}
           logo="https://github.githubassets.com/favicons/favicon.png"
           title="Github"
           subTitle="全球最大的代码托管平台"
@@ -191,7 +218,8 @@ export default function LoginFormPlayground() {
             </a>
           </div>
         </LoginForm>
+        </ProConfigProvider>
       </div>
-    </ProConfigProvider>
+    </div>
   );
 }

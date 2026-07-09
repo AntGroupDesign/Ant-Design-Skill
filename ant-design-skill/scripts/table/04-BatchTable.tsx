@@ -164,7 +164,7 @@ const BatchTable = () => {
 
 export default () => (
   <ConfigProvider theme={tableTheme}>
-    <div className="ds-page-card ds-table-card-padded">
+    <div className="ds-page-card ds-table-card-padded ds-pro-table-card">
       <BatchTable />
     </div>
   </ConfigProvider>

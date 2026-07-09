@@ -21,13 +21,6 @@ export default function ExpandableList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>4. 支持展开的列表（Expandable List）</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-tertiary)', margin: 0 }}>
-          通过收起展开方式渐进式呈现更多信息，主次分明，方便按需查看详情。
-        </p>
-      </div>
-
       <List
         header={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

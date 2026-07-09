@@ -56,7 +56,7 @@ const columns: ProFormColumnsType<DataItem>[] = [
 
 export default function EmbedFormPlayground() {
   return (
-    <div style={{ padding: 'var(--padding) var(--nav-space-6)' }}>
+    <div className="embed-form-page ds-page-card ds-form-panel">
       <ProForm name="schema-form-embed" submitter={{ render: false }}>
       <div style={{ border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius)', padding: 'var(--padding) var(--nav-space-6)', marginBottom: 'var(--margin)' }}>
         <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-secondary)', marginBottom: 'var(--margin)', color: 'var(--color-text)' }}>通用信息</div>
