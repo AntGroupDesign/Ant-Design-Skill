@@ -284,6 +284,7 @@ const tableTheme = {
 | 工具栏 / 筛选 / Tab 左右 | 24px（`var(--nav-space-6)`） | 方式 B：卡片 `padding-inline`；方式 A：容器 `padding-inline` |
 | Table 外框左 / 右 | 24px | 方式 B：由卡片内容区承担；方式 A：由 Table 首末列 24px 承担 |
 | 首列 / 末列单元格内部留白 | 16px | 方式 B：Table 首列 padding-left、末列 padding-right 保留 `var(--padding)`；方式 A：首末列 24px 已包含外框与单元格留白 |
+| 首列控制 icon（展开 / 勾选 / 拖拽） | 左 16px / 右 8px，控制列 48px | 使用 AntD 自带展开 / 选择列或模板 `ds-table-control-cell`；禁止手写额外 margin 拉开 |
 | 分页区左右 | 24px（`var(--nav-space-6)`） | 方式 B：由卡片承担；方式 A：分页包裹层 `padding-inline` |
 
 ### 分页规范
@@ -672,6 +673,8 @@ import { Table, Pagination } from 'antd';
 - `DndContext` / `SortableContext` 须通过 `components.body.wrapper` 挂载在 `<tbody>` 外层，**禁止**包裹整个 `<Table>`，否则会破坏表头 DOM 导致列标题不显示
 - 使用 `components.body.row` 自定义行时，**每列须设置固定 `width`**（像素或百分比），配合 `tableLayout="fixed"`
 - 拖拽手柄列 `title` 留空字符串即可；表头须 `white-space: nowrap` 防止换行
+- 拖拽手柄列使用 `width: 48` 且加 `className="ds-table-control-cell ds-table-drag-handle-cell"`，与嵌套表格展开 icon、批量选择 checkbox 的首列控制区保持一致：左 16px、右 8px，禁止通过增大列宽或额外 `margin-left` 调整位置
+- 拖拽手柄列之外的业务列优先使用百分比宽度承接剩余空间；避免所有业务列都写成较小像素宽度，否则表格铺满卡片时浏览器会按列分摊剩余宽度，导致拖拽控制列被视觉放大
 - 工具栏与表格间距、表格与底部摘要间距均使用 `var(--margin-md)`（20px）
 
 **代码模板**：`scripts/table/05-DragSortTable.tsx`

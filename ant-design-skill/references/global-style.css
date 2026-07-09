@@ -447,6 +447,25 @@ body,
   padding-left: var(--padding) !important;
 }
 
+/* 首列控制 icon（展开 / 勾选 / 拖拽）统一：左侧 16px，右侧 8px，避免控制列比普通首列显得更空 */
+.ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ant-table-row-expand-icon-cell:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ant-table-row-expand-icon-cell:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ant-table-selection-column:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ant-table-selection-column:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ds-table-control-cell:first-child,
+.ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ds-table-control-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ant-table-row-expand-icon-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ant-table-row-expand-icon-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ant-table-selection-column:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ant-table-selection-column:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell.ds-table-control-cell:first-child,
+.ds-table-card .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell.ds-table-control-cell:first-child {
+  width: 48px;
+  padding-left: var(--padding) !important;
+  padding-right: var(--nav-space-2) !important;
+  text-align: center;
+}
+
 .ds-table-card-padded .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
 .ds-table-card-padded .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell:last-child,
 .ds-table-card .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell:last-child,
@@ -2280,7 +2299,8 @@ body,
 .vertical-steps-form .steps-confirm-checklist {
   display: flex;
   flex-direction: column;
-  gap: var(--padding);
+  gap: var(--padding-sm);
+  margin-bottom: var(--nav-space-6);
   max-width: 520px;
 }
 

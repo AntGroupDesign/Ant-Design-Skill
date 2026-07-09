@@ -313,7 +313,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel → .horiz
 + 输入组件宽度使用 ProForm 内置 `width` 枚举，详见共性规则"输入框宽度规范"
 + `StepsForm` 必须放在白色 PagePanel 内，外层 PagePanel 使用 `ds-page-card steps-form-page-card` 或等效白色内容容器承担背景、圆角、阴影与 24px 水平内边距；禁止直接浮在页面灰色背景上
 + 分步表单卡内顶部到步骤区、submitter / 最后一项到底部均由 `vertical-steps-form` 保留 **48px**；禁止给 PagePanel 与 `vertical-steps-form` 同时叠加上下 padding
-+ 最后一步如包含 `Descriptions` / 表格汇总 + 多方确认 Checkbox，必须使用 `.steps-confirm-summary` 与 `.steps-confirm-checklist`：汇总区到 checkbox 组 16px，checkbox 行间距 16px，checkbox 与文案 8px 且多行文案顶对齐
++ 最后一步如包含 `Descriptions` / 表格汇总 + 多方确认 Checkbox，必须使用 `.steps-confirm-summary` 与 `.steps-confirm-checklist`：汇总区到 checkbox 组 16px，checkbox 行间距 12px，checkbox 组到按钮区 24px，checkbox 与文案 8px 且多行文案顶对齐
 + **禁止**在 `StepsForm` 上方叠加进度 Card、待补材料清单、协作看板，见 [分步表单选型](#分步表单选型)
 
 **页面结构**（嵌入现有后台时）：

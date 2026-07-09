@@ -60,10 +60,17 @@ const DragHandle: React.FC = () => {
 };
 
 const columns: TableColumnsType<DataType> = [
-  { title: '', key: 'sort', align: 'center', width: 48, render: () => <DragHandle /> },
-  { title: '姓名', dataIndex: 'name', width: 120 },
-  { title: '年龄', dataIndex: 'age', width: 80 },
-  { title: '地址', dataIndex: 'address', width: 240 },
+  {
+    title: '',
+    key: 'sort',
+    align: 'center',
+    width: 48,
+    className: 'ds-table-control-cell ds-table-drag-handle-cell',
+    render: () => <DragHandle />,
+  },
+  { title: '姓名', dataIndex: 'name', width: '30%' },
+  { title: '年龄', dataIndex: 'age', width: '20%' },
+  { title: '地址', dataIndex: 'address', width: '50%' },
 ];
 
 const initialData: DataType[] = [
