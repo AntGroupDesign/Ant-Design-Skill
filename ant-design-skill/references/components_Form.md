@@ -308,6 +308,7 @@ PageHeader → [可选 Alert（ds-page-inline-alert）] → PagePanel → .horiz
 + 各步骤表单**独立校验**，仅当前步骤校验通过才允许通过"下一步"按钮进入下一步
 + 最终提交时，`onFinish` 回调接收聚合对象
 + 按钮区通过 `submitter.render` 扩展：除「上一步 / 下一步 / 提交」外，可增加「暂存草稿」（调用 `formRef.getFieldsValue()`，**不**触发当前步 required 以外的全量校验）
++ 每一步当前内容区与 submitter 按钮区之间固定 **24px**（`var(--nav-space-6)`）；按钮区须使用 `.vertical-steps-form-submitter` 作为唯一间距锚点，禁止依赖最后一个 `Form.Item` 的 `margin-bottom` 或为不同步骤单独写 margin
 + 步骤数 ≥5 时，外层容器增加 `vertical-steps-form--five-steps` class（见 `global-style.css`）
 + 最后一步可增加 `Descriptions` 汇总关键字段，作为终态确认
 + 输入组件宽度使用 ProForm 内置 `width` 枚举，详见共性规则"输入框宽度规范"

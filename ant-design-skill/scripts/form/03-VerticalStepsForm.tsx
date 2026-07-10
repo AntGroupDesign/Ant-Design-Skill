@@ -69,7 +69,7 @@ export default function VerticalStepsFormPlayground() {
           )}
           submitter={{
             render: (props) => (
-              <div style={{ textAlign: 'left' }}>
+              <div className="vertical-steps-form-submitter">
                 <Space size={8}>
                   {props.step > 0 ? <Button onClick={() => props.onPre?.()}>上一步</Button> : null}
                   <Button icon={<SaveOutlined />} onClick={handleSaveDraft}>

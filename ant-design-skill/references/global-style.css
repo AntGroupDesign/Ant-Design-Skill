@@ -2207,6 +2207,15 @@ body,
   margin-bottom: var(--form-item-margin-bottom, 24px);
 }
 
+.vertical-steps-form .ant-pro-steps-form-stepFormBody > .ant-form > .ant-form-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.vertical-steps-form .vertical-steps-form-submitter {
+  margin-top: var(--nav-space-6);
+  text-align: left;
+}
+
 .vertical-steps-form .ant-form .ant-input:not(textarea):not(.ant-input-number-input) {
   width: 420px;
   height: 32px;
@@ -2300,7 +2309,7 @@ body,
   display: flex;
   flex-direction: column;
   gap: var(--padding-sm);
-  margin-bottom: var(--nav-space-6);
+  margin-bottom: 0;
   max-width: 520px;
 }
 
