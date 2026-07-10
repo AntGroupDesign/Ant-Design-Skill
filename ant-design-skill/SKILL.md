@@ -105,6 +105,8 @@ pnpm add @ant-design/charts@^2.0.0
 pnpm dlx create-umi@latest
 ```
 
+如安装 `@ant-design/pro-components` 时出现 peer dependency 提示，可在本地预览或验证场景使用 `npm install --legacy-peer-deps` 继续安装；安装后必须启动本地预览，检查 ProForm / ProTable / ProList / ProDescriptions / StatisticCard 等页面是否正常渲染与交互。若运行报错，优先修正具体 API 或样式问题，不得因此降级 antd 或替换 Skill 模板组件。
+
 ---
 
 ## 快速指引
