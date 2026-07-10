@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Avatar, Button } from 'antd';
+import { Avatar, Button, Space, Typography } from 'antd';
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -13,6 +13,8 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import '../../references/global-style.css';
+
+const { Title, Text } = Typography;
 
 interface MenuItem {
   id: string;
@@ -267,11 +269,16 @@ const SideLayout: React.FC<SideLayoutProps> = ({ children, pageTitle, pageSubtit
       {/* 主内容区 */}
       <main className="content">
         {(pageTitle || pageSubtitle) && (
-          <div className="page-head">
-            <div className="page-title">
-              {pageTitle && <h1>{pageTitle}</h1>}
-              {pageSubtitle && <p>{pageSubtitle}</p>}
-            </div>
+          // 布局壳可选兜底标题：业务页已有 .ds-page-header 时不要再传 pageTitle / pageSubtitle。
+          <div className="ds-page-header">
+            <Space direction="vertical" size={4}>
+              {pageTitle && (
+                <Title level={4} className="ds-page-title">
+                  {pageTitle}
+                </Title>
+              )}
+              {pageSubtitle && <Text type="secondary">{pageSubtitle}</Text>}
+            </Space>
           </div>
         )}
         {children}
@@ -785,29 +792,6 @@ const SideLayout: React.FC<SideLayoutProps> = ({ children, pageTitle, pageSubtit
           margin-left: var(--nav-sider-collapsed-width);
         }
 
-        .page-head {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: var(--nav-space-5);
-          margin-bottom: var(--nav-space-5);
-        }
-
-        .page-title h1 {
-          margin: 0;
-          font-size: var(--font-size-heading-4);
-          font-weight: var(--font-weight-secondary);
-          color: var(--color-text);
-          letter-spacing: 0;
-        }
-
-        .page-title p {
-          margin: var(--nav-space-2) 0 0;
-          font-size: var(--font-size-sm);
-          line-height: 22px;
-          color: var(--color-text-secondary);
-        }
-
         /* 响应式 */
         @media (max-width: 1120px) {
           .search input {
@@ -839,10 +823,6 @@ const SideLayout: React.FC<SideLayoutProps> = ({ children, pageTitle, pageSubtit
             margin-left: 0;
             padding-right: var(--nav-space-4);
             padding-left: var(--nav-space-4);
-          }
-
-          .page-head {
-            display: block;
           }
         }
       `}</style>

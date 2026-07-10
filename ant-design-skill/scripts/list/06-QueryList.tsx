@@ -75,7 +75,7 @@ export default function QueryList() {
 
   return (
     <div className="ds-page-shell">
-      {/* === 1. PageHeader（位于主内容 Card 外部） === */}
+      {/* === 1. PageHeader（业务页面级标题，非卡片标题，也非布局壳标题） === */}
       <div className="ds-page-header">
         <Space direction="vertical" size={4}>
           <Title level={4} className="ds-page-title">

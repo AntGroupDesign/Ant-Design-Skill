@@ -56,9 +56,36 @@
 菜单名称用于导航定位，页面标题用于说明当前业务任务，二者不得默认绑定。
 
 - `SideLayout` / `MixedLayout` 只负责导航框架、侧边栏、内容区偏移与收起展开，不应自动把 `activeMenu` 渲染成业务页面主标题
-- 业务页面标题统一由页面层 `PageHeader` / `.ds-page-header` 渲染；同一页面只能有一个主标题来源
+- **默认**：业务页面自己渲染页面总标题，统一使用 `.ds-page-header`
+- **可选**：布局壳可通过显式 `pageTitle` / `pageSubtitle` 渲染兜底页面总标题
+- 业务页面 `.ds-page-header` 与布局壳 `pageTitle` / `pageSubtitle` **只能二选一**；同一页面只能有一个主标题来源
 - 若确需布局层渲染标题，必须通过显式 `pageTitle` / `pageSubtitle` 等 props 传入；禁止直接使用当前菜单名生成 `<h1>` / `Title`
+- 两种标题来源的视觉必须完全一致，均使用 `.ds-page-header` + `<Title level={4} className="ds-page-title">`
 - 禁止同时在布局层和业务页面层各写一个主标题，避免出现「导航菜单名 + 页面任务名」重复堆叠
+- 禁止用原生 `<h1>` / `<p>` 拼页面总标题；禁止把 `className="ds-page-title"` 挂在外层 `div` 上
+
+#### 页面总标题 DOM 结构
+
+页面总标题固定使用以下结构。右侧全局操作、轻量统计或辅助说明放入 `ds-page-header-extra`；没有右侧内容时可省略该 `Space`。
+
+```tsx
+<div className="ds-page-header">
+  <Space direction="vertical" size={4}>
+    <Title level={4} className="ds-page-title">工单列表</Title>
+    <Text type="secondary">一屏完成日常巡检与批量处置</Text>
+  </Space>
+  <Space className="ds-page-header-extra">...</Space>
+</div>
+```
+
+禁止生成以下错误结构：
+
+```tsx
+<div className="ds-page-title">
+  <h1>工单列表</h1>
+  <p>...</p>
+</div>
+```
 
 #### Pro PageContainer（嵌入 ProLayout 时）
 
