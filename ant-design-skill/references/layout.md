@@ -704,6 +704,9 @@ transition: var(--nav-transition);
 - 默认不使用 `Input.Search`，避免右侧搜索按钮、分割线和输入框形成老式组合态。
 - 仅在搜索必须由“点击搜索按钮”显式提交，或高成本远程查询需要独立提交入口时，才允许使用 `Input.Search`。
 - `.nav-search` 必须绑定在 `Input` 的 `ant-input-affix-wrapper` 根节点上，通过 `variant="filled"` 形成浅灰填充搜索框。
+- 顶导搜索的可见输入主体必须是 `Input` 本身：`<Input className="nav-search" variant="filled" prefix={<SearchOutlined />} allowClear />`。禁止把 `.nav-search` 绑在 `AutoComplete`、`Select`、`Input.Search` 或自定义外层容器上。
+- 如需搜索建议、最近访问、跨业务候选等增强能力，只能使用 `Popover` / `Dropdown` 等浮层承载候选内容；不得用 `AutoComplete` 替换顶导搜索主体。
+- 出现白底、尾部背景、宽度错位等问题时，优先检查是否偏离上述 DOM 结构；禁止通过 `.nav-search .ant-select-selector`、`.nav-search-autocomplete` 等补丁类硬盖错误结构。
 
 ```css
 .nav-search.ant-input-affix-wrapper {
@@ -730,7 +733,7 @@ import {
   BellOutlined, QuestionCircleOutlined, SearchOutlined,
 } from '@ant-design/icons';
 
-// 组间距 16px，组内间距 4px
+// 组间距 16px，组内间距 4px；顶导搜索必须保持裸 Input 结构，候选能力用 Popover / Dropdown 外挂
 <Space size={16} align="center">
   <Input
     className="nav-search"

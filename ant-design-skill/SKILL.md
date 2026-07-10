@@ -224,6 +224,7 @@ pnpm dlx create-umi@latest
 4. 保留导航 DOM 结构、CSS token、hover / active / collapsed 状态；SideLayout / MixedLayout 必须保留独立可见的侧边栏收起触发器，收起态只隐藏品牌文字不隐藏 Logo。
 5. 顶部导航一级菜单必须保留模板 `.menu-item` 选中态（文字加深 + 字重 500，无背景），禁止改为 Tab / 胶囊 / Segmented 样式；完整禁止项见 `layout.md` §顶部一级菜单规范。
 6. TopLayout / MixedLayout 顶部品牌区后不得生成竖向分割线；禁止给 `.brand-name`、`.logo-section`、`.header-left`、`.topbar-left` 添加 `border-right`、伪元素竖线或右侧 `box-shadow`。混合导航的侧边栏右边界必须从顶栏下方开始，不得穿过顶栏品牌区。
+7. TopLayout / MixedLayout 顶导搜索必须保留模板中的 `Input.nav-search` 结构；搜索建议、最近访问、跨业务候选等增强能力使用 `Popover` / `Dropdown` 浮层扩展，不得替换为 `AutoComplete`、`Select` 或 `Input.Search`。
 
 ### 业务组件生成流程
 

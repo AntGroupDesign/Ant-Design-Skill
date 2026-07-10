@@ -146,7 +146,7 @@ const MixedLayout: React.FC = () => {
 
         {/* 右侧：组间距 16px，组内间距 4px */}
         <div className="header-right">
-          {/* 搜索框 */}
+          {/* 顶导搜索：必须保持裸 Input 结构；如需联想候选，用 Popover / Dropdown 外挂，不要换成 AutoComplete / Select / Input.Search */}
           <Input
             className="nav-search"
             placeholder="搜索..."

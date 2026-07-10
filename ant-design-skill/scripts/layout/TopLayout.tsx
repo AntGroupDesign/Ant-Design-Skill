@@ -61,6 +61,7 @@ const TopLayout: React.FC = () => {
         </div>
 
         <div className="header-right">
+          {/* 顶导搜索：必须保持裸 Input 结构；如需联想候选，用 Popover / Dropdown 外挂，不要换成 AutoComplete / Select / Input.Search */}
           <Input
             className="nav-search"
             placeholder="搜索..."
