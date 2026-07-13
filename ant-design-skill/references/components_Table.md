@@ -374,7 +374,7 @@ import { Table, Pagination } from 'antd';
 
 | 规则 | 值 | 说明 |
 | :-- | :-- | :-- |
-| Tab Strip 距卡片顶 | **16px**（`var(--padding)`） | 由 `.ds-card-tab-strip` 顶部 padding 承担 |
+| Tab Strip 距卡片顶 | **16px**（`var(--padding)`） | 当 `ds-card-tab-strip` 位于 `ds-page-card` / `ds-table-card` 的首个内容位置时，由卡片容器 `padding-block-start` 承担，`.ds-card-tab-strip` 的 `padding-top` 为 0 |
 | Tab 行高度 | **32px** | `toolbar-tabs` / ProTable toolbar tab 统一固定高度，避免 Tab 行忽高忽低 |
 | Tab Strip 与 Table 顶间距 | **16px**（`var(--padding)`） | Tab Strip 底部 padding 承担；禁止再触发 `.ds-card-toolbar + Table` 的 16px margin |
 | Tab 与轻量操作同行 | 同一行 | Tab 在左侧；搜索、少量筛选、日期、添加等操作在**右侧** |
@@ -382,15 +382,17 @@ import { Table, Pagination } from 'antd';
 | 选中 Tab 指示 | 无下划线 | 选中项只保留主色文字与数量弱主色态；禁止 AntD ink-bar、整块背景、描边 |
 | Tab 数量 | 中性数量 | 使用 `className="ds-tab-count"`；默认灰底 / 次要文字，active 时跟随主色弱强调 |
 
+垂直节奏为：卡片顶部 → 16px（卡片 padding-top）→ 32px Tabs 行高 → 16px（`ds-card-tab-strip` padding-bottom）→ Table 表头。不要让 `.ds-card-tab-strip` 自己承担完整上 / 中 / 下节奏，否则首个内容为 Tab 时会与卡片 padding 叠加成 32px 顶距。
+
 **Tab Strip 只允许轻量单行**：
 
 | 结构 | 适用 | 间距规则 |
 | :-- | :-- | :-- |
-| `ds-card-tab-strip` | 结果分类 Tab、少量筛选项、搜索框和 1～2 个结果级操作按钮能在一行内展示 | Tab 在左，筛选 / 操作在右；顶部 16px、Tab 行 32px、底部 16px；到 Table 不再额外 `marginTop` |
+| `ds-card-tab-strip` | 结果分类 Tab、少量筛选项、搜索框和 1～2 个结果级操作按钮能在一行内展示 | Tab 在左，筛选 / 操作在右；首个内容时顶部 16px 由卡片 padding 承担，Tab Strip 保留 32px 行高和底部 16px；到 Table 不再额外 `marginTop` |
 
 若筛选项需要多行、展开收起、字段 ≥5 个，或同行展示会挤压主操作，必须上移为独立 `<Card className="ds-search-panel">` 承载 `QueryFilter`，不得在表格卡内部承载复杂筛选。
 
-> **禁止**：在表格卡内部使用双行筛选工具栏；让右侧操作换行或主按钮掉到第二行；用负 `margin` 修正 Tab 位置；在 Tab Strip 和 Table 之间手写 `marginTop: var(--padding)` / `marginTop: var(--margin-md)`；同时保留 ProTable 默认 ListToolBar padding 与外层卡片 padding；把 Tab 数量用 `Badge` 的 error / warning / success 红黄绿语义色表达。
+> **禁止**：在表格卡内部使用双行筛选工具栏；让右侧操作换行或主按钮掉到第二行；用负 `margin` 修正 Tab 位置；在 Tab Strip 和 Table 之间手写 `marginTop: var(--padding)` / `marginTop: var(--margin-md)`；当 `ds-card-tab-strip` 是卡片首个内容时额外写 `marginTop`、空占位块或保留 ProTable 默认 toolbar padding 造成间距叠加；把 Tab 数量用 `Badge` 的 error / warning / success 红黄绿语义色表达。
 
 **结构示例**（antd `Tabs` + `Table`）：
 
@@ -422,7 +424,7 @@ import { Table, Pagination } from 'antd';
 </div>
 ```
 
-> `ds-card-tab-strip`、`table-toolbar-with-tabs`、`toolbar-tabs`、`ds-table-card-with-tabs`、`ds-tab-count` 样式定义见 `references/global-style.css`。Tab Strip 按 **16 / 32 / 16** 固定节奏承接到 Table，禁止再包一层 `marginTop`。
+> `ds-card-tab-strip`、`table-toolbar-with-tabs`、`toolbar-tabs`、`ds-table-card-with-tabs`、`ds-tab-count` 样式定义见 `references/global-style.css`。当 Tab Strip 是卡片首个内容时，卡片顶部到 Tab 的 16px 由卡片 padding 承担，Tab Strip 只保留 32px 行高和到底部 Table 的 16px，禁止再包一层 `marginTop`。
 
 **ProTable 实现注意**（外层卡片 **方案 B**：`ds-page-card ds-table-card-padded`）：
 
@@ -687,7 +689,7 @@ import { Table, Pagination } from 'antd';
 
 适用场景：需要在表格顶部使用 toolbar 支持 Tab 切换分类、筛选组件和操作按钮的组合，适合多维度数据切换与快捷操作。
 
-布局须符合上文 **「卡内顶部 Tab Strip」**：Tab 与搜索/筛选/日期/添加同一行，筛选项与操作按钮在右侧；Tab Strip 按 16 / 32 / 16 节奏承接到 Table、无整条底部分割线、无 ink-bar；Tab 数量使用 `ds-tab-count` 中性样式。
+布局须符合上文 **「卡内顶部 Tab Strip」**：Tab 与搜索/筛选/日期/添加同一行，筛选项与操作按钮在右侧；首个 Tab Strip 的顶部 16px 由卡片 padding 承担，Tab 行高 32px、下方到 Table 16px，无整条底部分割线、无 ink-bar；Tab 数量使用 `ds-tab-count` 中性样式。
 
 **toolbar 各子属性的布局规范（ProTable）：**
 

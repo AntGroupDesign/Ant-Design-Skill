@@ -530,7 +530,7 @@ body,
   white-space: nowrap;
 }
 
-/* 卡片内部顶部结果分类 Tab：仅用于表格 / 列表卡内的结果分类，固定 16 / 32 / 16 */
+/* 卡片内部顶部结果分类 Tab：仅用于表格 / 列表卡内的结果分类 */
 .ds-card-tab-strip {
   display: flex;
   align-items: center;
@@ -538,6 +538,16 @@ body,
   gap: var(--nav-space-4);
   min-width: 0;
   padding: var(--padding) 0;
+}
+
+/* 首个内容就是 Tab Strip 且卡片自身已有顶部 padding 时，顶部 16px 由卡片 padding 承担，避免叠成 32px。 */
+.ds-page-card:not(.ds-list-card):not(.list-surface-card) > .ds-card-tab-strip:first-child,
+.ds-table-card > .ds-card-tab-strip:first-child,
+.ant-card.ds-page-card:not(.ds-list-card):not(.list-surface-card) > .ant-card-body > .ds-card-tab-strip:first-child,
+.ant-card.ds-table-card > .ant-card-body > .ds-card-tab-strip:first-child,
+.ant-pro-card.ds-page-card:not(.ds-list-card):not(.list-surface-card) > .ant-pro-card-body > .ds-card-tab-strip:first-child,
+.ant-pro-card.ds-table-card > .ant-pro-card-body > .ds-card-tab-strip:first-child {
+  padding-top: 0;
 }
 
 .ds-card-tab-strip .toolbar-tabs {
@@ -1636,7 +1646,7 @@ body,
  * ProTable 卡内顶部结果分类 Tab（对齐 components_Table.md §卡内顶部 Tab Strip）
  * - 方案 B（默认）：外层 ds-page-card / ds-table-card 已 padding-inline 24px，工具栏不再叠加
  * - ProTable ListToolBar 默认 padding-block: 16px 会叠加成 32px，须去掉顶部重复值
- * - 结果分类 Tab 固定 16 / 32 / 16，无底线、无 ink-bar
+ * - 顶部 16px 由外层卡片 padding 承担，Tab 行 32px，下方 16px，无底线、无 ink-bar
  */
 .ds-table-card-with-tabs .ant-pro-table-list-toolbar-container {
   padding-block-start: 0 !important;
