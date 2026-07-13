@@ -67,6 +67,7 @@
   | `Processing` | 进行中 / 处理中 | `--color-info` (#1677ff) |
   | `Default` | 关闭 / 停用 / 未知 | 中性灰（无对应功能色变量） |
 - **长文本**：定义合理列宽，配合 `ellipsis: true` 单行省略，超出部分显示省略号；完整内容须通过 **Tooltip** 展示；**禁止**单元格多行跨行
+- **表体单行**：列表 / 表格页的普通数据单元格默认必须保持单行扫描，禁止在 `render` 中把主字段、描述、头像、负责人、进度补充说明等手写成纵向多行结构。需要展示完整信息时，优先使用 `ellipsis + Tooltip`、单独详情页 / 抽屉，或拆为独立列；仅用户明确要求“描述型表格 / 展开详情 / 多行备注列”时才允许多行。
 - **列对齐**：表格业务列默认左对齐；表头与正文必须使用同一列对齐方式，禁止只让表头或正文单独偏移
 - **数字类**：数字、百分比、金额、耗时、调用量、带单位指标等，在本 Skill 的默认表格生成中也保持左对齐；禁止仅因字段是数值而设置 `align: 'right'`
 - **状态标签**：若数值后需要跟随状态 Tag，仍保持左对齐，避免右对齐时标签参与对齐、破坏数值比较线
@@ -83,6 +84,61 @@
   | 正文 / 业务标识 | 正文默认，`ds-text-main` | 名称、工号、订单号、用户 ID、角色名、含英文的资源名 |
   | 技术标识 | `--font-code` / `.db-font-code` / `Text code` | Git commit、缺陷 ID、API 路径（**非**列表主数据列的常规展示字段） |
   | 金额 / 指标数字（需位数对齐比较） | `--font-number` / `.db-font-number` | ¥527,000、转化率 |
+
+#### 表体单行与长内容检查
+
+表格的首要目标是横向扫描与比较，默认不把单元格当成卡片使用。生成 `columns` 后必须逐列检查表体内容：
+
+| 列类型 | 正确做法 | 禁止做法 |
+| :-- | :-- | :-- |
+| 名称 / 标识 / key | 设置明确 `width` / `minWidth`，`ellipsis: true`，完整值用 Tooltip 展示 | 名称太长时自然换行；在名称下方再放描述，形成两行以上 |
+| 负责人 / 成员 | 头像 + 名称同一水平行，名称 `whiteSpace: 'nowrap'` / ellipsis | 头像一行、姓名一行；姓名两个字按字竖排 |
+| 操作列 | `width >= 160`，`Space size={8}`，`whiteSpace: 'nowrap'` | 操作链接换行、竖排，或用 `Space direction="vertical"` |
+| 进度 / TTL / 数值状态 | 主数值与轻量图形保持紧凑；额外说明放 Tooltip 或详情 | 在一个单元格里堆叠数值、进度条、剩余天数多行，撑高整行 |
+| 主字段 + 描述 | 表格中默认只展示主字段；描述放 Tooltip / 详情 / 抽屉 | 把列表卡片式「标题 + 描述」迁移到 Table 单元格 |
+
+推荐写法：
+
+```tsx
+{
+  title: 'FF名称',
+  dataIndex: 'name',
+  width: 200,
+  ellipsis: true,
+  render: (name: string, record) => (
+    <Tooltip title={`${name}：${record.description}`}>
+      <Typography.Text ellipsis style={{ maxWidth: 168 }}>
+        {name}
+      </Typography.Text>
+    </Tooltip>
+  ),
+}
+```
+
+负责人列须保持横向一行：
+
+```tsx
+{
+  title: '负责人',
+  dataIndex: 'owner',
+  width: 112,
+  render: (owner) => (
+    <Space size={8} align="center" style={{ whiteSpace: 'nowrap' }}>
+      <Avatar size={24}>{owner.name.slice(0, 1)}</Avatar>
+      <Typography.Text ellipsis style={{ maxWidth: 56 }}>
+        {owner.name}
+      </Typography.Text>
+    </Space>
+  ),
+}
+```
+
+生成后自检：
+
+1. 名称 / 标识列是否设置了 `width` 或 `minWidth`，并使用 `ellipsis` / Tooltip。
+2. `render` 内是否出现 `Space direction="vertical"`、多个块级 `div` 纵向堆叠、`<br />` 或主字段下方描述；若出现，必须确认是否为用户明确要求的多行备注 / 展开详情。
+3. 负责人 / 成员 / 操作列是否 `whiteSpace: 'nowrap'`，头像、姓名、操作链接不得竖排或换行。
+4. 表头和表体都应单行；列宽不足时优先增加列宽、减少低价值列、启用 `scroll={{ x: ... }}`，不要压缩列宽让内容换行。
 
 
 ### 标签使用规范
@@ -291,6 +347,15 @@ const tableTheme = {
 
 ### 分页规范
 
+分页写法必须二选一：内置分页由 AntD Table 自己渲染，外置分页由业务容器包裹 `Pagination`。两种 DOM 结构不同，间距来源也不同，禁止混用。
+
+| 写法 | 结构 | Table 到分页 16px 来源 | 约束 |
+| :-- | :-- | :-- | :-- |
+| 内置分页 | `Table pagination={{ ... }}` | `.ant-table-pagination` 的 `margin-top` | 不得传入 `className: 'ds-table-pagination'` |
+| 外置分页 | `Table pagination={false}` + `<div className="ds-table-pagination"><Pagination /></div>` | `.ds-table-pagination` 的 `padding-top` | `ds-table-pagination` 只作为外置容器 class |
+
+记住一句：内置用 margin，外置用 padding；同一段 16px 间距只允许一个来源承担，禁止 margin 与 padding 叠加成 32px。
+
 使用 Ant Design `Pagination` 组件，配合 `Table` 的 `pagination` 属性关闭内置分页：
 
 ```tsx
@@ -313,6 +378,27 @@ import { Table, Pagination } from 'antd';
 - 分页器右对齐，与工具栏布局对齐
 - 分页器容器与 Table 末列右缘、工具栏同一对齐线：**方式 B** 由卡片 `padding-inline` 承担，分页包裹层**勿再**加 `padding-inline`；**方式 A** 时分页包裹层须 `padding-inline: var(--nav-space-6)`
 - 分页器样式继承 Ant Design 默认，无需额外配置
+- `ds-table-pagination` 只允许作为外置分页容器 class，禁止用于 `Table pagination.className` / `.ant-table-pagination`
+
+```tsx
+// ✅ 内置分页：只使用 Table pagination，由 .ant-table-pagination margin-top 承担 16px
+<Table pagination={{ pageSize: 10, total }} />
+
+// ✅ 外置分页：关闭内置 pagination，由 ds-table-pagination padding-top 承担 16px
+<Table pagination={false} />
+<div className="ds-table-pagination">
+  <Pagination pageSize={10} total={total} />
+</div>
+
+// ❌ 内置分页误用外置容器 class，会形成 margin-top + padding-top 叠加
+<Table
+  pagination={{
+    className: 'ds-table-pagination',
+    pageSize: 10,
+    total,
+  }}
+/>
+```
 
 ```tsx
 {/* 方式 B：卡片已承担左右 24px，分页只保留垂直间距 */}
@@ -538,6 +624,8 @@ import { Table, Pagination } from 'antd';
 ## 与页面整体布局的协调要求
 
 表格通常放在白色卡片容器中，卡片外缘与页面级 PageHeader 对齐；卡片内部内容线遵循 [`layout.md` §页面内容水平对齐](layout.md#页面内容水平对齐)（距卡片外缘**左右 24px**）。
+
+表格页是否展示面包屑取决于信息架构层级：菜单直接进入的一级入口表格页不展示；从上级对象、详情页、项目空间或流程上下文下钻出的表格页可以展示面包屑，例如「应用详情 / 部署记录」「项目详情 / 成员变更」。禁止根据“这是表格页”或菜单 / route 层级自动生成面包屑；需要面包屑时由业务页面显式声明，规则见 [`layout.md` §带面包屑的页面标题区](layout.md#带面包屑的页面标题区)。
 
 **默认（方案 B）**：卡片 shell 使用 `className="ds-page-card ds-table-card-padded"`（上 16 / 左右 24 / 下 16），Table 外框与工具栏 / Tab / 分页共用 24px 内容线；Table 首末列保留 **16px 单元格内部留白**，避免灰色表头 / 行背景中的文字贴边。工具栏 / Tab / 分页**勿再**叠加水平 `padding-inline`。
 

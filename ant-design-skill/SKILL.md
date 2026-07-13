@@ -271,8 +271,8 @@ pnpm dlx create-umi@latest
 5. **禁止**在工具栏与表格之间插入汇总条；轻量统计放 `PageHeader` extra，见 `components_Table.md` §工具栏与表格之间禁止插入汇总条
 6. 表格卡内部遵循 `components_Table.md` §表格卡内部垂直节奏与§表格卡头部表达：左右对齐线 24px；卡内标题 / 工具栏 / Tab / Table / 分页之间统一 16px；表格卡左上角必须有简单标题、单行工具栏或结果分类 Tab，禁止只有空白 padding 后直接进入表头；只有确有分类切换时才使用 Tab
 7. ProTable 作为表格卡内容时，外层必须使用 `ds-page-card ds-table-card-padded ds-pro-table-card`；若使用 `toolbar.menu.type: 'tab'`，再叠加 `ds-table-card-with-tabs`，避免 ProTable 默认 ListToolBar / ProCard body padding 与外层卡片 padding 叠加
-8. 自定义分页必须使用 `className="ds-table-pagination"` 或等价结构；若使用 Table 内置分页，外层表格卡仍必须保留 `padding-block-end: var(--padding)`
-9. 检查表头单行展示：短枚举列、可排序列须预留标题与图标宽度，列过多时使用横向滚动，禁止压缩到表头跨行
+8. Table / List 分页写法必须二选一：内置分页只使用组件自带 `pagination`，不得传入 `ds-table-pagination` / `ds-list-pagination` 等外置分页容器 class；外置分页必须关闭内置 `pagination`，并用 `ds-table-pagination` / `ds-list-pagination` 包裹 `Pagination`。同一段 16px 间距只允许一个来源承担，禁止 margin 与 padding 叠加成 32px；若使用 Table 内置分页，外层表格卡仍必须保留 `padding-block-end: var(--padding)`
+9. 检查表头与表体单行展示：短枚举列、可排序列须预留标题与图标宽度；名称 / 标识 / 负责人 / 操作列须设置合理宽度、`ellipsis` / Tooltip 或 `whiteSpace: 'nowrap'`；禁止在 `render` 中手写纵向多行结构导致名称、负责人、操作链接换行。列过多时使用横向滚动，禁止压缩列宽让表头或表体跨行。
 
 #### 生成列表页面
 
@@ -287,7 +287,7 @@ pnpm dlx create-umi@latest
 2. 复制代码模板
 3. 配置数据源、列定义、操作处理函数
 4. 列表卡内部遵循 `components_List.md` §列表卡内部留白，与表格卡共用「左右对齐线 24px、卡内工具栏 / Tab / List / 分页之间 16px」规则
-5. 有分页列表必须使用 `className="ds-list-pagination"` 或等价 `padding: var(--padding) 0`；无分页列表必须保留 16px 底部收口（`.ds-list-bottom-spacer` 或全局兜底），禁止最后一条列表项贴到卡片底部
+5. 外置分页列表必须使用 `className="ds-list-pagination"` 或等价 `padding: var(--padding) 0`；若使用 List / ProList 内置分页，不得再套外置分页容器或重复写 `padding-top`；无分页列表必须保留 16px 底部收口（`.ds-list-bottom-spacer` 或全局兜底），禁止最后一条列表项贴到卡片底部
 6. 带右侧图片 / 缩略图的列表项必须使用 `components_List.md` §列表条目内部布局：图片作为 `media` / `extra` 时相对整条列表项上下居中，外层用 `.ds-list-item-media`，内层固定尺寸图盒用 `.ds-list-item-media-box`，禁止贴顶或贴底
 
 #### 生成图表页面
@@ -426,7 +426,7 @@ PageShell（或布局主内容区）
 6. **分步表单默认约束**：生成 `StepsForm` 页面时，**默认不生成**表单区上方的进度 Card、待补材料清单、协作看板；步骤进度由 `Steps` 步骤条承担；需全局追踪时由列表/详情/工单页承担，见 `components_Form.md` §分步表单选型
 7. **页面标题唯一来源**：导航布局只负责菜单与内容容器，业务主标题由页面层 `PageHeader` 负责；禁止布局层用 `activeMenu` 自动渲染标题后，页面层再写第二个标题
 8. **页面标题水平对齐**：页面级 `PageHeader` / `.ds-page-header` 默认直接放在 `.ds-page-shell` 下，禁止设置 `padding-inline`；页面左右留白由布局层 `<Content>` / `.content` 唯一提供。只有 Card / 表格 / 列表等内容容器内部才使用 `padding-inline: var(--nav-space-6)`。
-9. **带面包屑的页面标题区**：列表页默认不展示面包屑；详情页、流程页、编辑页等存在层级返回语义时使用 `ds-page-header ds-page-header-with-breadcrumb`。面包屑、标题行和下方业务卡片外缘必须共用 `<Content>` / `.content` 提供的 24px 页面左对齐线，禁止给 Breadcrumb / PageHeader 单独设置 `padding-left`、`margin-left` 或包进 Card。内容区顶部到面包屑的 24px 由 Content padding 提供；面包屑到标题行固定 `var(--nav-space-2)`（8px）；标题行到首个业务区块继续由 `.ds-page-shell { gap: var(--nav-space-4) }` 提供 16px。Breadcrumb 必须使用 `/` 分隔，AntD 写法固定 `separator="/"`。标题右侧如有全局操作、轻量统计或辅助说明，必须放在标题行右侧 `ds-page-header-extra`，与标题行同一行上下居中并靠右；不得放到面包屑行，也不得在标题与业务卡片之间单独插入汇总条。
+9. **带面包屑的页面标题区**：一级入口页默认不展示面包屑；面包屑只用于存在明确上级路径、下钻来源或返回语义的页面，例如详情页、编辑页、流程页、创建页，以及从对象详情或项目空间继续下钻出的列表 / 表格页。页面是否展示面包屑由信息架构层级决定，不由列表 / 表格 / 表单等组件形态决定。Layout / ProLayout / PageContainer 不得根据菜单层级、`activeMenu`、`pathname` 或 route 自动生成全局面包屑；Breadcrumb 必须由业务页面显式声明。使用 ProLayout / PageContainer 生成一级入口页时须关闭默认面包屑，例如 `breadcrumbRender={false}`。使用面包屑时，标题行和下方业务卡片外缘必须共用 `<Content>` / `.content` 提供的 24px 页面左对齐线，禁止给 Breadcrumb / PageHeader 单独设置 `padding-left`、`margin-left` 或包进 Card。内容区顶部到面包屑的 24px 由 Content padding 提供；面包屑到标题行固定 `var(--nav-space-2)`（8px）；标题行到首个业务区块继续由 `.ds-page-shell { gap: var(--nav-space-4) }` 提供 16px。Breadcrumb 必须使用 `/` 分隔，AntD 写法固定 `separator="/"`。标题右侧如有全局操作、轻量统计或辅助说明，必须放在标题行右侧 `ds-page-header-extra`，与标题行同一行上下居中并靠右；不得放到面包屑行，也不得在标题与业务卡片之间单独插入汇总条。
 10. **侧边栏收起态用户区**：收起态只保留 32px 头像，隐藏用户名和整个 `.user-action-icons` 容器；头像必须设置 `flex: 0 0 32px` / `min-width: 32px` 防止被 flex 压缩，`.user-actions` 收起态须 `gap: 0`。
 11. **侧边栏边界与间距**：SideLayout / MixedLayout 中，除 24px 收起触发器允许向侧边栏右侧受控外露 12px 外，Logo、品牌名、菜单、分组标题、底部用户区（如有）均不得横向溢出；品牌名、菜单文本、用户名必须单行省略。侧边导航节奏固定为：顶部到首个分组 12px、分组标题高 40px、标题到菜单 0、菜单行 40px、分组之间 12px + 分割线 + 12px；如有固定底部用户区，最后一组到底部用户区避让 12px。
 12. **搜索卡 Card body 间距**：`<Card className="ds-search-panel">` 的内边距必须作用到 `.ant-card-body`；禁止只在 Card 外层写 padding，禁止同时写 `styles.body.padding` 与 `.ds-search-panel` padding。搜索框到 Tab 的 16px 只由 `.ds-search-tabs-row` 承担，搜索行不得再写额外 `marginBottom`。
@@ -434,6 +434,7 @@ PageShell（或布局主内容区）
 14. **页面级白卡投影**：页面业务容器（`ds-page-card`、`ds-search-panel`、`ds-list-card`、`ds-table-card`、`ds-statistic-card`）统一白底、8px 圆角、`var(--shadow)` 轻投影并清除默认描边；AntD Card / ProCard 生成时优先 `bordered={false}`。对象选择卡 / 卡片列表项可用细描边表达交互状态，但不得替代页面级白卡投影。
 15. **页面级内容卡 padding 唯一来源**：基础业务卡内容区固定上下 `var(--padding)`（16px）、左右 `var(--nav-space-6)`（24px），适用于通用 Card、列表卡、表格卡、指标卡、图表卡、描述分组卡和对象选择卡；不适用于表单内部字段布局、StepsForm 步骤条、嵌入表单弱分组、QueryFilter 字段栅格和 submitter。普通 `div.ds-page-card` 由外层承担；AntD `Card` / ProCard / `StatisticCard` 必须命中 `.ant-card-body` / `.ant-pro-card-body`；`ds-list-card` 的 Card body 必须清零，由壳层承担 24px 内容线。禁止 `bodyStyle={{ padding: 24 }}`、`styles.body.padding: 24`、toolbar / List item / Table wrapper 再次写水平 padding。Table 外框跟随卡片 24px 内容线，但首末列必须保留 `var(--padding)`（16px）单元格内部留白，避免表头 / 行内容文字贴边。ProTable 必须用 `ds-pro-table-card` 清掉内部 ProCard body / ListToolBar 默认 padding，避免与外层表格卡叠加。对象选择卡可保留描边状态，但 body padding 不例外。
 16. **搜索卡与 QueryFilter 分层**：`ds-search-panel` 是页面级筛选区容器，负责白卡外观、区块间距和 Card body padding；`QueryFilter` 是内部筛选表单组件，负责字段栅格、展开收起、查询 / 重置和提交行为。复杂筛选必须使用 `<Card bordered={false} className="ds-search-panel"><QueryFilter ... /></Card>`；禁止把 `QueryFilter` 当成独立白卡外壳，也禁止在复杂筛选场景用手写搜索卡字段替代 `QueryFilter`。筛选项 ≤4 且一行清晰时才使用卡内单行工具栏或轻量搜索卡字段。
+17. **弹窗 / 抽屉浮层结构**：生成 Modal / Drawer 前必须先判断展示类还是操作类；浮层必须显式定义宽度档位、最大视口约束、滚动归属和操作按钮位置，详见 `components_Form.md` §弹窗 / 抽屉浮层容器。固定设计值须集中到局部常量或设计 token 映射中，禁止在 `styles` 和计算表达式里散落硬编码。普通业务 Modal 默认设置 `centered`，禁止依赖 AntD 默认 `top: 100px` 造成弹窗偏上；操作类 Modal 使用 header / body / footer 三段式，header 与 footer 有分割线，body 是唯一滚动区且 footer 固定可见；展示类 Modal 可不生成 footer。桌面 Drawer 默认使用左关闭 + 标题 + 右侧操作按钮的固定 header，body 单独滚动；禁止沿用右上角默认关闭、把按钮放进可滚动 body，或让底部按钮被内容挤出屏幕。
 
 ### Design Token 集成（复制模板时必做）
 

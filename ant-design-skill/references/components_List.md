@@ -136,6 +136,7 @@
 - 主标题：`<Title level={4} className="ds-page-title">`，字号 / 行高 / 颜色由 `.ds-page-header .ds-page-title` 提供（20px / 28px）；详见 [`layout.md` §页面主标题 typography](layout.md#带面包屑的页面标题区)
 - 副标题（页面用途 / 操作指引）：放在主标题**下方**独立第二行，使用 `<Text type="secondary">`；与主标题间距 4px（`Space direction="vertical" size={4}`）
 - 标题同行后缀（刷新口径等轻量元信息）：与主标题 baseline 对齐时使用 `ds-page-title-row` + `ds-page-title-suffix`，见 [`layout.md` §页面标题同行后缀](layout.md#页面标题同行后缀titlesuffix)
+- 列表页面是否展示面包屑取决于信息架构层级：菜单直接进入的一级列表页不展示；从详情页、项目空间、应用对象等上级上下文下钻出的列表页可以展示面包屑，例如「应用详情 / 实例列表」「项目详情 / 发布记录」。禁止根据“这是列表页”一刀切决定面包屑，也禁止由 Layout / ProLayout 根据菜单层级自动生成面包屑。
 
 #### PageHeader 操作组（右上角按钮组）
 
@@ -195,7 +196,7 @@
 - 操作列须固定列宽；操作链接使用 `className="list-text-btn"` 或 `Typography.Link`
 - 工具栏下方禁止再额外设置 `margin-bottom` 或 `padding-bottom`，避免与第一条列表项的顶部 padding 叠加
 - 普通列表条目之间的分割线由 `.list-item-hover::after` 绘制，在 `ds-list-card` 内 `left/right: 0`（与内容同宽，不再内缩 24px）；表格式列表若行内另有 16px 单元格内边距，分割线仍铺满表格内容宽度
-- 分页区必须使用 `className="ds-list-pagination"` 或等价 `padding: var(--padding) 0`，承担「列表到分页 16px」与「分页到底部 16px」
+- 外置分页区必须使用 `className="ds-list-pagination"` 或等价 `padding: var(--padding) 0`，承担「列表到分页 16px」与「分页到底部 16px」；`ds-list-pagination` 只用于外置列表分页容器，若使用 List / ProList 内置 pagination，不得再套外置分页容器或重复写 `padding-top`
 - 无分页列表必须保留底部 16px：使用 `.ds-list-bottom-spacer`，或由 `global-style.css` 的 `.ant-list.ds-list-card:not(:has(.ant-list-footer))` / `.ant-list.list-surface-card:not(:has(.ant-list-footer))` 兜底；禁止最后一条列表项贴到卡片底部
 - 列表卡内嵌 Table 时：Table 首末列由 `global-style.css` 在 `.ds-list-card` 下自动保留 16px 单元格内部留白（等同 `ds-table-card-padded`），避免表头 / 行内容贴边
 

@@ -619,6 +619,11 @@ body,
   padding-block: var(--padding) 0;
 }
 
+/* ds-table-pagination 只用于外置分页容器；误挂到 AntD 内置分页时清掉 padding，避免与 margin-top 叠加。 */
+.ant-table-pagination.ds-table-pagination {
+  padding-block: 0 !important;
+}
+
 .ds-table-card-padded .ant-table-pagination.ant-pagination,
 .ds-table-card .ant-table-pagination.ant-pagination {
   margin-block: var(--padding) 0 !important;

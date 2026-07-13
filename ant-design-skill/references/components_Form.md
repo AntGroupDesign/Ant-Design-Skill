@@ -6,7 +6,7 @@
 
 | 场景 | 说明 |
 | :-- | :-- |
-| [表单共性规则](#表单共性规则) | 适用于所有表单组件的按钮位置、控件选择、输入宽度、Token、抽屉与状态色规则 |
+| [表单共性规则](#表单共性规则) | 适用于所有表单组件的按钮位置、控件选择、输入宽度、Token、弹窗 / 抽屉浮层与状态色规则 |
 | [1. 基础表单 (Basic Form)](#1-基础表单-basic-form) | 单列垂直布局的信息录入表单，适用于字段较少的场景 |
 | [2. 横向分步表单 (Steps Form)](#2-横向分步表单-steps-form) | 长流程拆解为多个有序步骤，各步骤独立校验 |
 | [3. 竖向分步表单 (Steps Form - Vertical)](#3-竖向分步表单-steps-form---vertical) | 竖向排列步骤条，适用于步骤较多（≥4 步）的场景 |
@@ -27,17 +27,24 @@
 ### 操作按钮位置
 按钮顺序固定为：左侧次操作（取消 / 重置）→ 右侧主操作（确认 / 提交 / 发布）。按钮对齐方式按场景区分：
 
-+ **抽屉 / 模态弹窗**：按钮位于容器底部**右对齐**
++ **模态弹窗**：操作类弹窗按钮位于固定 `footer`，**右对齐**；展示类弹窗可不生成 `footer`
++ **抽屉**：桌面端操作类抽屉默认将取消 / 确定放在自定义标题栏右侧，与左侧关闭、标题同属固定 `header`；仅移动端或特殊长流程才使用底部 `footer`
 + **独立页面 / 嵌入区块**：按钮位于容器底部**左对齐**
 
 ```tsx
-// 抽屉 / 弹窗：右对齐
+// 弹窗 footer：右对齐
 <div style={{ textAlign: 'right' }}>
   <Space size={8}>
     <Button onClick={onClose}>取消</Button>
     <Button type="primary" htmlType="submit">确认</Button>
   </Space>
 </div>
+
+// 桌面抽屉：标题栏右侧操作
+<Space size={8}>
+  <Button onClick={onClose}>取消</Button>
+  <Button type="primary" onClick={onSubmit}>确定</Button>
+</Space>
 
 // 独立页面 / 嵌入区块：左对齐
 <div style={{ textAlign: 'left' }}>
@@ -139,6 +146,161 @@ Form 相关 Design Token 统一定义在 [`references/global-style.css`](../refe
 + **样式引用**：优先使用 `--form-*` 变量（如 `--form-item-margin-bottom`、`--form-drawer-content-padding-inline`）
 + **`ConfigProvider` 注入**：`theme.components.Form` 须传入**具体数值/色值**，禁止传入 `'var(--xxx)'` 字符串；取值与 global-style.css 该区块注释一致
 
+### 弹窗 / 抽屉浮层容器
+
+生成 `Modal` / `Drawer` 承载表单、详情、图表或审批动作前，先判断浮层类型，再决定结构、尺寸和滚动归属：
+
+| 类型 | 内容 | 操作区 |
+| :-- | :-- | :-- |
+| 展示类浮层 | 信息详情、只读字段、指标、图表、监控面板 | 默认不生成 `footer`；仅保留关闭或跳转等轻操作 |
+| 操作类浮层 | 新增、编辑、申请、审批、配置、批量处理表单 | 必须有固定可见的操作区，取消在前、主操作在后 |
+
+浮层固定尺寸属于设计值，生成代码时必须集中到局部常量或设计 token 映射中，禁止在 `styles`、内联布局和计算表达式里散落裸数字：
+
+```tsx
+const FLOATING_LAYER_TOKENS = {
+  headerHeight: 56,
+  footerHeight: 56,
+  contentPadding: 24,
+  viewportGap: 48,
+  mobileViewportGap: 32,
+  modalBodyReservedHeight: 180,
+  separator: '1px solid var(--color-border-secondary)',
+} as const;
+
+const FLOATING_LAYER_WIDTHS = {
+  confirmModal: 480,
+  formModal: 640,
+  complexModal: 800,
+  detailDrawer: 480,
+  formDrawer: 560,
+  compactFormDrawer: 376,
+  complexDrawer: 720,
+} as const;
+```
+
+若项目已在 `global-style.css` 中定义同义 CSS 变量，可优先改用 CSS 变量；否则使用上述局部常量承载。颜色仍必须引用 CSS 变量，禁止写死 hex。
+
+#### Modal 三段式
+
+操作类 `Modal` 必须显式使用 `header / body / footer` 三段式；优先通过当前 Ant Design 语义样式 slot 中的 `styles.container`、`styles.header`、`styles.body`、`styles.footer` 控制分区样式，禁止依赖全局 CSS 选择器批量覆盖。这里的 `container` 指 Modal 内容容器 slot，用来清掉 AntD 默认 `.ant-modal-content` padding；不要写成 `styles.content`。若项目当前 Ant Design 版本没有 `container` 语义 slot，才允许给 Modal 添加局部 `className`，在页面 / 组件局部样式中 scoped 清理 `.ant-modal-content` padding；不要把这类修正写进全局 `global-style.css`。
+
++ **container**：必须清掉 AntD 默认内容内边距，`padding: 0`，否则会在弹窗卡片内额外叠出一圈空白，并导致分割线左右不到头。
++ **position**：普通业务 Modal 默认必须设置 `centered`，让弹窗卡片在视口中上下居中；禁止依赖 AntD 默认 `top: 100px`，否则中高内容弹窗会明显偏上。仅当用户明确要求顶部对齐、引导提示或批量预览等特殊场景时，才允许不用 `centered`，且须显式说明原因。
++ **header**：承载标题和关闭按钮，整体高度固定 **`FLOATING_LAYER_TOKENS.headerHeight`（56px）**，左右内边距为 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，内容垂直居中，底部有分割线，`marginBottom: 0`；分割线挂在 header 容器本身，必须横向到弹窗卡片左右边缘，禁止内缩。
++ **body**：承载表单 / 图表 / 详情内容，`padding` 使用 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，内容区上下左右均为 24px，是唯一滚动区；设置 `maxHeight` 与 `overflow: 'auto'`，禁止把按钮区放进 body。
++ **footer**：仅操作类 Modal 必须生成，整体高度固定 **`FLOATING_LAYER_TOKENS.footerHeight`（56px）**，左右内边距为 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，顶部有分割线，按钮右对齐并固定可见；展示类 Modal 可设置 `footer={null}`。分割线挂在 footer 容器本身，必须横向到弹窗卡片左右边缘。
+
+Modal 宽度按内容复杂度选档，不要所有弹窗都套同一个宽度：
+
+| 场景 | 建议宽度 |
+| :-- | :-- |
+| 二次确认 / 简短确认 | `416` / `480` |
+| 普通单列表单 | `640` |
+| 复杂表单 / 多模块配置 | `720` / `800` |
+| 图表、监控面板、横向详情 | `960` 或更宽，需保证图表可读 |
+
+所有 Modal 必须有视口兜底：`style={{ maxWidth: \`calc(100vw - ${FLOATING_LAYER_TOKENS.viewportGap}px)\` }}`；移动端或窄屏可将 `viewportGap` 收敛到 `FLOATING_LAYER_TOKENS.mobileViewportGap`。body 高度使用 `FLOATING_LAYER_TOKENS.modalBodyReservedHeight` 做视口约束，避免底部按钮溢出屏幕。表单类 Modal 中，字段左边线须与 header 标题内容线对齐，禁止 body 内再包一层额外左右 padding 造成输入框左右不齐。
+
+```tsx
+<Modal
+  title="申请计算资源"
+  open={open}
+  centered
+  width={FLOATING_LAYER_WIDTHS.formModal}
+  onCancel={onClose}
+  style={{ maxWidth: `calc(100vw - ${FLOATING_LAYER_TOKENS.viewportGap}px)` }}
+  styles={{
+    header: {
+      height: FLOATING_LAYER_TOKENS.headerHeight,
+      padding: `0 ${FLOATING_LAYER_TOKENS.contentPadding}px`,
+      display: 'flex',
+      alignItems: 'center',
+      borderBottom: FLOATING_LAYER_TOKENS.separator,
+      marginBottom: 0,
+    },
+    body: {
+      padding: FLOATING_LAYER_TOKENS.contentPadding,
+      maxHeight: `calc(100dvh - ${FLOATING_LAYER_TOKENS.modalBodyReservedHeight}px)`,
+      overflow: 'auto',
+    },
+    footer: {
+      height: FLOATING_LAYER_TOKENS.footerHeight,
+      padding: `12px ${FLOATING_LAYER_TOKENS.contentPadding}px`,
+      borderTop: FLOATING_LAYER_TOKENS.separator,
+      marginTop: 0,
+    },
+    container: {
+      padding: 0,
+      overflow: 'hidden',
+    },
+  }}
+  footer={
+    <Space size={8}>
+      <Button onClick={onClose}>取消</Button>
+      <Button type="primary" onClick={onSubmit}>提交申请</Button>
+    </Space>
+  }
+>
+  <Form layout="vertical" requiredMark>...</Form>
+</Modal>
+```
+
+#### Drawer 顶部工作栏
+
+桌面端操作类 `Drawer` 默认使用固定顶部工作栏：左侧关闭按钮 + 标题，右侧取消 / 确定等操作按钮；标题栏底部必须有分割线。body 单独滚动，禁止让页面主体滚动，也禁止把操作按钮放在可滚动内容底部导致不可见。
+
++ **宽度选档**：详情抽屉 `480`；普通表单 `520` / `560`；复杂表单、图表或表格 `640` / `720`。桌面端最大不超过 `80vw`，移动端使用 `100vw`。
++ **header**：不要直接使用 AntD Drawer 默认 `title` / `extra` 组合来承载完整工作栏，默认 header 内部结构容易带来额外对齐偏差。使用 `title={null}`、`closable={false}`、`styles.body.padding = 0`，在 Drawer 内部显式渲染一个固定 **`FLOATING_LAYER_TOKENS.headerHeight`（56px）** 的自定义 header。header 左右内边距为 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，关闭按钮在左上角，标题紧随其后，操作按钮在右侧；底部分割线挂在 header 容器本身，必须横向到抽屉左右边缘，禁止内缩。
++ **body**：自定义 header 下方再放内容滚动区，`padding` 使用 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，内容区上下左右均为 24px，`overflow: 'auto'`，是唯一滚动区。
++ **footer**：桌面端默认不生成；只有移动端、强流程或用户明确要求底部操作区时才使用，且必须固定可见并加顶部分割线。
+
+```tsx
+<Drawer
+  open={open}
+  width={`min(${FLOATING_LAYER_WIDTHS.formDrawer}px, 80vw)`}
+  onClose={onClose}
+  closable={false}
+  title={null}
+  styles={{
+    body: {
+      padding: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      overflow: 'hidden',
+    },
+  }}
+>
+  <div
+    style={{
+      height: FLOATING_LAYER_TOKENS.headerHeight,
+      padding: `0 ${FLOATING_LAYER_TOKENS.contentPadding}px`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
+      borderBottom: FLOATING_LAYER_TOKENS.separator,
+      flex: `0 0 ${FLOATING_LAYER_TOKENS.headerHeight}px`,
+    }}
+  >
+    <Space size={8} align="center">
+      <Button type="text" icon={<CloseOutlined />} onClick={onClose} aria-label="关闭" />
+      <span style={{ fontSize: 16, fontWeight: 600 }}>添加活动方案</span>
+    </Space>
+    <Space size={8}>
+      <Button onClick={onClose}>取消</Button>
+      <Button type="primary" onClick={onSubmit}>确定</Button>
+    </Space>
+  </div>
+  <div style={{ padding: FLOATING_LAYER_TOKENS.contentPadding, overflow: 'auto', flex: '1 1 auto' }}>
+    <Form layout="vertical" requiredMark>...</Form>
+  </div>
+</Drawer>
+```
+
+展示类抽屉可以保留右侧轻操作或不放操作按钮，但仍应使用同样的自定义固定 header。不要在 Drawer body 顶部再重复写一个大标题，也不要把统计卡、图表、表单整体再包进带 24px padding 的内层白卡，避免内容线错位。
+
 ### 抽屉面板宽度
 当使用 Ant Design `Drawer` 承载单列垂直表单、且抽屉 `body` 仅铺表单而无侧栏等横向分栏时：
 
@@ -150,26 +312,46 @@ Form 相关 Design Token 统一定义在 [`references/global-style.css`](../refe
 ### 抽屉标题栏与关闭按钮
 适用于 `Drawer` 内嵌表单（含单列垂直、卡片分组等）：
 
-+ **关闭入口**须与**标题同一行**，且位于**标题之后（靠右，LTR）**；**禁止**将关闭放在**标题之前**（例如行首），以免与阅读顺序和底部主操作右对齐习惯冲突。
-+ 为避免关闭按钮出现在标题**之前**（如 `placement: 'start'`），**必须**显式设置 `closable={{ placement: 'end' }}`。
-+ **距面板右内边距**：关闭可点击区域与面板右缘之间取 **24px**（`var(--form-drawer-content-padding-inline)`），并与 `footer` 内操作按钮（取消 / 确定等）右缘纵向对齐。
-+ 可通过 `Drawer` 的 `styles.header`、`styles.footer`（或与 `footer` 内包裹层的 `padding`）与 `styles.body` 统一左右 **`var(--form-drawer-content-padding-inline)`**，确保标题行关闭与底部按钮同一垂线。
++ **关闭入口**须与**标题同一行**，且位于**标题之前（靠左，LTR）**；用 Drawer 内部自定义 header 渲染关闭按钮 + 标题，`closable={false}` 且 `title={null}`，关闭 AntD 默认右上角关闭入口与默认 header 结构。
++ **右侧操作**：桌面端操作类 Drawer 的取消 / 确定放入自定义 header 右侧，按钮右缘与 body 的右内容线对齐；不要再生成底部 `footer`，避免上下出现两套操作区。
++ **分割线**：header 底部必须有 `1px solid var(--color-border-secondary)`，让标题 / 操作区与内容区边界清晰。
++ **内边距**：自定义 header 与内容滚动区左右统一 **`FLOATING_LAYER_TOKENS.contentPadding`（24px）**，header 高度固定 **`FLOATING_LAYER_TOKENS.headerHeight`（56px）**，body 上下左右 24px；body 内表单不要再额外包一层左右 24px padding。
 
 ```tsx
 <Drawer
-  title="添加数据源"
-  width={376}
+  width={`min(${FLOATING_LAYER_WIDTHS.compactFormDrawer}px, 80vw)`}
   open={open}
   onClose={onClose}
-  closable={{ placement: 'end' }}
+  closable={false}
+  title={null}
   styles={{
-    header: { paddingInline: 24 },
-    body: { paddingInline: 24 },
-    footer: { paddingInline: 24 },
+    body: { padding: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' },
   }}
-  footer={/* 取消 / 确认，右对齐 */}
 >
-  <Form layout="vertical" requiredMark>...</Form>
+  <div
+    style={{
+      height: FLOATING_LAYER_TOKENS.headerHeight,
+      padding: `0 ${FLOATING_LAYER_TOKENS.contentPadding}px`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
+      borderBottom: FLOATING_LAYER_TOKENS.separator,
+      flex: `0 0 ${FLOATING_LAYER_TOKENS.headerHeight}px`,
+    }}
+  >
+    <Space size={8} align="center">
+      <Button type="text" icon={<CloseOutlined />} onClick={onClose} aria-label="关闭" />
+      <span style={{ fontSize: 16, fontWeight: 600 }}>添加数据源</span>
+    </Space>
+    <Space size={8}>
+      <Button onClick={onClose}>取消</Button>
+      <Button type="primary" onClick={onSubmit}>确定</Button>
+    </Space>
+  </div>
+  <div style={{ padding: FLOATING_LAYER_TOKENS.contentPadding, overflow: 'auto', flex: '1 1 auto' }}>
+    <Form layout="vertical" requiredMark>...</Form>
+  </div>
 </Drawer>
 ```
 
