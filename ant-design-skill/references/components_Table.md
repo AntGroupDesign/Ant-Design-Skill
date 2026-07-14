@@ -436,9 +436,8 @@ import { Table, Pagination } from 'antd';
 ### 工具栏布局
 | 类型 | 适用场景 | 设计说明 |
 | :-- | :-- | :-- |
-| **单行工具栏** | 操作和信息简洁，可在一行内清晰展示 | 最左侧为表格标题 / 当前结果标题；右侧从左到右依次：搜索、筛选、新建等创建型操作、刷新/批量导出等全局操作 |
+| **单行工具栏** | 操作和信息简洁，可在一行内清晰展示 | 最左侧必须为表格标题 / 当前结果标题；右侧从左到右依次：搜索、筛选、新建等创建型操作、刷新/批量导出等全局操作 |
 | **复杂筛选** | 控件较多、需要多行或展开收起 | 不放在表格卡内部，须上移为独立搜索卡，并由搜索卡承载 `QueryFilter` |
-| **无标题工具栏** | 表格上下文已非常清晰，无需重复说明 | 省略标题，搜索框需前置 |
 | **标题下拉菜单** | 表格存在几种核心状态或分类需切换，且选项数量为 4-7 个时使用。若选项 ≤4 个且需要高曝光，优先使用"带标签"而非下拉菜单 | 将核心状态/分类设计成标题下拉菜单，方便快速切换 |
 | **带标签** | 存在筛选频率最高的字段，子集固定且数量较少（≤4个） | 将最高频筛选字段的子集用卡内顶部 Tab Strip 展示在工具栏最左侧 |
 
@@ -453,6 +452,8 @@ import { Table, Pagination } from 'antd';
 | 卡内顶部 Tab Strip | 有结果分类切换，如「全部 / 运行中 / 异常」 | `ds-card-tab-strip table-toolbar-with-tabs` 或 ProTable `toolbar.menu.type: 'tab'` |
 
 **不要为了填补左上角空白强行生成 Tab**。只有当数据集确实存在固定分类 / 状态切换时才使用 Tab；否则使用简单标题。若页面级 `PageHeader` 已经表达全局标题，表格卡内仍需表达当前数据集名称（如「用户列表」「应用版本列表」），但避免重复写成同一个页面大标题。
+
+**禁止搜索框占据卡片左上角**：搜索 / 筛选 / 新建 / 刷新等都属于控制项，不是数据集上下文。表格卡首行左侧必须有 `ds-table-title`、当前结果标题或结果分类 Tab；若没有分类切换，使用「应用列表」「FeatureFlag 列表」「发布记录」等轻量标题。禁止把搜索框作为 `ds-card-toolbar` 的第一个也是唯一的左侧内容。
 
 ### 卡内顶部 Tab Strip
 
@@ -547,15 +548,18 @@ import { Table, Pagination } from 'antd';
 <div className="ds-page-card ds-table-card-padded" style={{ background: 'var(--color-bg-container)', ... }}>
   {/* 工具栏：左右由卡片 padding 承担，勿再加 padding-inline */}
   <div className="ds-card-toolbar ds-card-toolbar-inline">
-    <div className="search-wrapper">
-      <Input
-        className="table-filter-search"
-        prefix={<SearchOutlined />}
-        placeholder="搜索..."
-        style={{ width: 280 }}
-      />
-    </div>
-    <Button type="primary">新建</Button>
+    <span className="ds-table-title">应用列表</span>
+    <Space size={8} align="center" className="ds-card-toolbar-actions">
+      <div className="search-wrapper">
+        <Input
+          className="table-filter-search"
+          prefix={<SearchOutlined />}
+          placeholder="搜索..."
+          style={{ width: 280 }}
+        />
+      </div>
+      <Button type="primary">新建</Button>
+    </Space>
   </div>
 
   {/* 无 Tab 工具栏：顶部间距 20px */}

@@ -52,11 +52,11 @@
 | 类型 | 适用场景 | 设计说明 |
 | :-- | :-- | :-- |
 | **Tab 标签** | 该字段是用户筛选频率最高，子集固定且数量较少（≤4 个） | 使用 `ds-card-tab-strip` 将最高频筛选字段的子集展示在列表卡顶部，方便用户快速筛选 |
-| **带筛选项** | 列表顶部的工具操作和信息相对简洁，可以清晰地在一行内展示全部筛选项 | 无标题时，高频筛选项位于列表左侧，右侧依次为搜索框、新建、删除等全局操作项；有标题时，筛选项、搜索、新建等全局操作位于右侧，从左到右依次是筛选项、搜索框、新建、删除、设置等全局操作 |
+| **带筛选项** | 列表顶部的工具操作和信息相对简洁，可以清晰地在一行内展示全部筛选项 | 左侧必须为列表结果标题、当前结果标题或结果分类 Tab；筛选项、搜索、新建等控制项位于右侧，从左到右依次是筛选项、搜索框、新建、删除、设置等全局操作 |
 | **单行工具栏** | 操作和信息简洁，可在一行内清晰展示 | 最左侧为列表标题；右侧从左到右依次：搜索、筛选、新建等创建型操作、刷新/批量导出等全局操作 |
 | **复杂筛选** | 控件较多、需要多行或展开收起 | 不放在列表卡内部，须上移为独立搜索卡，并由搜索卡承载 `QueryFilter` |
 
-列表卡内部工具栏分两类：普通标题 / 搜索 / 操作用 `ds-card-toolbar ds-card-toolbar-inline` 或 `list-card-toolbar`；顶部结果分类 Tab（如「全部 / 进行中 / 失败」）用 `ds-card-tab-strip + toolbar-tabs`。当列表内容放在已有顶部 padding 的页面 / 表格卡容器内时，首个 `ds-card-tab-strip` 的顶部 16px 由外层容器 padding 承担，`ds-card-tab-strip` 不再额外增加顶部 padding，只保留 32px Tab 行高和下方 16px 到列表内容的间距；纯 `ds-list-card` 壳层只承担水平 24px，顶部 16px 仍由内部 Tab Strip / Header 垂直 padding 承担。普通标题工具栏下方到首条列表 / 表格式表头必须保留 16px。Tab 数量使用 `ds-tab-count` 中性灰底样式，active 时仅弱主色强调；禁止用红 / 黄 / 绿 Badge 把普通数量做成告警状态。若筛选项需要多行、展开收起或字段 ≥5 个，必须上移为独立搜索卡承载 `QueryFilter`。禁止使用负 `margin`、空占位块或手写 `marginTop` 修正 Tab / 筛选项位置。
+列表卡内部工具栏分两类：普通标题 / 搜索 / 操作用 `ds-card-toolbar ds-card-toolbar-inline` 或 `list-card-toolbar`；顶部结果分类 Tab（如「全部 / 进行中 / 失败」）用 `ds-card-tab-strip + toolbar-tabs`。当列表内容放在已有顶部 padding 的页面 / 表格卡容器内时，首个 `ds-card-tab-strip` 的顶部 16px 由外层容器 padding 承担，`ds-card-tab-strip` 不再额外增加顶部 padding，只保留 32px Tab 行高和下方 16px 到列表内容的间距；纯 `ds-list-card` 壳层只承担水平 24px，顶部 16px 仍由内部 Tab Strip / Header 垂直 padding 承担。普通标题工具栏下方到首条列表 / 表格式表头必须保留 16px。Tab 数量使用 `ds-tab-count` 中性灰底样式，active 时仅弱主色强调；禁止用红 / 黄 / 绿 Badge 把普通数量做成告警状态。若筛选项需要多行、展开收起或字段 ≥5 个，必须上移为独立搜索卡承载 `QueryFilter`。禁止搜索框 / 筛选框作为列表卡左上角唯一内容；搜索、筛选、新建、刷新等控制项必须放在标题或 Tab 右侧。禁止使用负 `margin`、空占位块或手写 `marginTop` 修正 Tab / 筛选项位置。
 
 #### 搜索与筛选分组
 
@@ -188,7 +188,7 @@
 - 列表卡 `<Card>` 须加 `className="ds-list-card"`（或等价 `padding-inline: var(--nav-space-6)` 的壳层 + `body padding: 0`）；AntD Card / ProCard 场景下 `.ant-card-body` / `.ant-pro-card-body` 必须清零，避免与壳层 24px 水平内容区叠加
 - 列表卡顶部有普通工具栏 / 筛选区时：工具栏容器只承担**顶部**留白，建议 `padding: var(--padding) 0 0`
 - 列表卡顶部有结果分类 Tab 时：使用 `className="ds-card-tab-strip"` + `Tabs className="toolbar-tabs"`；若外层已经有顶部 padding，`ds-card-tab-strip` 只保留 32px 行高和下方 16px；纯 `ds-list-card` / Ant List header 场景仍由内部垂直 padding 提供顶部 16px。禁止再套 `ds-card-toolbar`、额外 `marginTop`、空占位块或保留 ink-bar 下划线
-- 列表卡顶部如有右侧操作按钮（如导出当前结果、批量处理、刷新当前列表），左侧必须有列表结果标题，禁止出现“左侧空白、右侧孤立按钮”的工具栏
+- 列表卡顶部如有搜索 / 筛选 / 右侧操作按钮（如导出当前结果、批量处理、刷新当前列表），左侧必须有列表结果标题、当前结果标题或结果分类 Tab，禁止出现“左侧空白、左侧只有搜索框 / 筛选框、右侧孤立按钮”的工具栏
 - 第一条列表项使用自身行内距承接工具栏下方距离，列表项统一 `padding: var(--padding) 0`（**仅垂直**）
 - 使用 `antd` List / ProList 时，不得依赖组件默认 `.ant-list-item { padding: 12px 0; }` 的水平分量；须显式 `padding-inline: 0` 或由 `global-style.css` 的 `.ds-list-card .ant-list-item` 覆盖
 - 若列表采用表格式多列排布（如编号、标题、状态、日期、详情操作），表头行与内容行共用同一个 `gridTemplateColumns`、`columnGap`；表格式行若有灰色表头 / 行背景，首末列须保留 16px 单元格内部留白；普通列表条目仍只保留垂直 padding
@@ -242,7 +242,7 @@
 
 - 工具栏使用 `className="list-card-toolbar"`，只承担顶部留白和左右布局，水平留白由 `ds-list-card` 壳层统一承担
 - `list-card-toolbar` 后方到列表内容必须保留 16px；使用 `global-style.css` 中 `.list-card-toolbar + .ant-list / .ds-list-content / .ds-list-table` 的兜底，不要用负 margin 或把表头贴到标题下方
-- 若工具栏包含结果分类 Tab / 搜索 / 筛选 / 操作按钮，外层须使用 `ds-card-tab-strip`，Tab 左、搜索 / 筛选 / 操作右，右侧操作不得跨行；若不含 Tab，仅标题 / 搜索 / 操作按钮时使用 `ds-card-toolbar ds-card-toolbar-inline`。工具栏内部不得再写 `marginTop`
+- 若工具栏包含结果分类 Tab / 搜索 / 筛选 / 操作按钮，外层须使用 `ds-card-tab-strip`，Tab 左、搜索 / 筛选 / 操作右，右侧操作不得跨行；若不含 Tab，仅标题 / 搜索 / 操作按钮时使用 `ds-card-toolbar ds-card-toolbar-inline`，且左侧必须有标题。工具栏内部不得再写 `marginTop`
 - 左侧标题使用 `className="list-card-title"`，字号 16px、字重 600；统计说明使用 `list-card-title-meta`
 - 右侧按钮不带前置 icon，除非是纯图标的更多入口；普通导出 / 刷新 / 批量操作用文字按钮
 - 禁止使用空 `<div />`、`flex: 1` 占位、负 `margin` 或 `justifyContent: flex-end` 生成左侧空白工具栏
