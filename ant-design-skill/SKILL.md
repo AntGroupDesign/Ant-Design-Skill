@@ -272,7 +272,8 @@ pnpm dlx create-umi@latest
 6. 表格卡内部遵循 `components_Table.md` §表格卡内部垂直节奏与§表格卡头部表达：左右对齐线 24px；卡内标题 / 工具栏 / Tab / Table / 分页之间统一 16px；表格卡左上角必须有简单标题、带左侧标题的单行工具栏或结果分类 Tab，禁止只有空白 padding 后直接进入表头，也禁止搜索框 / 筛选框作为卡片左上角唯一内容；只有确有分类切换时才使用 Tab
 7. ProTable 作为表格卡内容时，外层必须使用 `ds-page-card ds-table-card-padded ds-pro-table-card`；若使用 `toolbar.menu.type: 'tab'`，再叠加 `ds-table-card-with-tabs`，避免 ProTable 默认 ListToolBar / ProCard body padding 与外层卡片 padding 叠加
 8. Table / List 分页写法必须二选一：内置分页只使用组件自带 `pagination`，不得传入 `ds-table-pagination` / `ds-list-pagination` 等外置分页容器 class；外置分页必须关闭内置 `pagination`，并用 `ds-table-pagination` / `ds-list-pagination` 包裹 `Pagination`。同一段 16px 间距只允许一个来源承担，禁止 margin 与 padding 叠加成 32px；若使用 Table 内置分页，外层表格卡仍必须保留 `padding-block-end: var(--padding)`
-9. 检查表头与表体单行展示：短枚举列、可排序列须预留标题与图标宽度；名称 / 标识 / 负责人 / 操作列须设置合理宽度、`ellipsis` / Tooltip 或 `whiteSpace: 'nowrap'`；禁止在 `render` 中手写纵向多行结构导致名称、负责人、操作链接换行。列过多时使用横向滚动，禁止压缩列宽让表头或表体跨行。
+9. 检查表头与表体单行展示：短枚举列、可排序列须预留标题与图标宽度；名称 / 标识 / 负责人 / 操作列须设置合理宽度、`ellipsis` / Tooltip 或 `whiteSpace: 'nowrap'`；禁止在 `render` 中手写纵向多行结构导致名称、负责人、操作链接换行。
+10. 检查操作列与横向溢出：操作列不得固定套用 120 / 160，须按文案分档设置宽度（2 个 2 字操作 ≥160px，含 3-4 字操作 ≥180-200px，两个 4 字操作 ≥200px），并统一用 `Space` + `table-action-cell` + `whiteSpace: 'nowrap'` 包裹。列数 ≥ 6、存在长文本列 + 日期 / 时间列 + 操作列，或操作列含 3-4 字操作时，必须检查列宽总和；仅当列宽总和超过容器，或已出现表头换行、操作列贴边 / 溢出、内容被裁切时，才设置 `scroll={{ x: ... }}`。启用 `scroll.x` 后，操作列建议 `fixed: 'right'`；未启用横向滚动时，不默认固定列。禁止压缩列宽、换行或裁切操作链接。
 
 #### 生成列表页面
 

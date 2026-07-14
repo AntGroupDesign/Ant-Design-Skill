@@ -83,16 +83,17 @@ const expandColumns: TableColumnsType<ExpandedDataType> = [
 ];
 
 const columns: TableColumnsType<DataType> = [
-  { title: '应用名称', dataIndex: 'name', key: 'name' },
-  { title: '平台', dataIndex: 'platform', key: 'platform' },
-  { title: '版本号', dataIndex: 'version', key: 'version' },
-  { title: '升级数量', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-  { title: '负责人', dataIndex: 'creator', key: 'creator' },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt' },
+  { title: '应用名称', dataIndex: 'name', key: 'name', width: 180, fixed: 'left' },
+  { title: '平台', dataIndex: 'platform', key: 'platform', width: 120 },
+  { title: '版本号', dataIndex: 'version', key: 'version', width: 160 },
+  { title: '升级数量', dataIndex: 'upgradeNum', key: 'upgradeNum', width: 120 },
+  { title: '负责人', dataIndex: 'creator', key: 'creator', width: 120 },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
   {
     title: '操作',
     key: 'operation',
     width: 160,
+    fixed: 'right',
     render: () => (
       <Space size={8} align="center" className="table-action-cell" style={{ whiteSpace: 'nowrap' }}>
         <Button type="link">发布</Button>
@@ -119,6 +120,7 @@ const App: React.FC = () => (
         columns={columns}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
         dataSource={dataSource}
+        scroll={{ x: 1040 }}
       />
     </div>
   </ConfigProvider>

@@ -93,7 +93,7 @@
 | :-- | :-- | :-- |
 | 名称 / 标识 / key | 设置明确 `width` / `minWidth`，`ellipsis: true`，完整值用 Tooltip 展示 | 名称太长时自然换行；在名称下方再放描述，形成两行以上 |
 | 负责人 / 成员 | 头像 + 名称同一水平行，名称 `whiteSpace: 'nowrap'` / ellipsis | 头像一行、姓名一行；姓名两个字按字竖排 |
-| 操作列 | `width >= 160`，`Space size={8}`，`whiteSpace: 'nowrap'` | 操作链接换行、竖排，或用 `Space direction="vertical"` |
+| 操作列 | 按操作文案长度分档设置 `width`，统一使用 `Space size={8}` + `table-action-cell` + `whiteSpace: 'nowrap'`；列较多时配合 `scroll.x` 与 `fixed: 'right'` | 固定套用 120 / 160；只写 `nowrap` 不给足列宽；裸返回 Button 数组；操作链接换行、竖排，或用 `Space direction="vertical"` |
 | 进度 / TTL / 数值状态 | 主数值与轻量图形保持紧凑；额外说明放 Tooltip 或详情 | 在一个单元格里堆叠数值、进度条、剩余天数多行，撑高整行 |
 | 主字段 + 描述 | 表格中默认只展示主字段；描述放 Tooltip / 详情 / 抽屉 | 把列表卡片式「标题 + 描述」迁移到 Table 单元格 |
 
@@ -138,7 +138,8 @@
 1. 名称 / 标识列是否设置了 `width` 或 `minWidth`，并使用 `ellipsis` / Tooltip。
 2. `render` 内是否出现 `Space direction="vertical"`、多个块级 `div` 纵向堆叠、`<br />` 或主字段下方描述；若出现，必须确认是否为用户明确要求的多行备注 / 展开详情。
 3. 负责人 / 成员 / 操作列是否 `whiteSpace: 'nowrap'`，头像、姓名、操作链接不得竖排或换行。
-4. 表头和表体都应单行；列宽不足时优先增加列宽、减少低价值列、启用 `scroll={{ x: ... }}`，不要压缩列宽让内容换行。
+4. 操作列 `width` 是否按实际文案分档设置：2 个 2 字操作可用 160px；含 3-4 字操作时至少 180-200px；两个 4 字操作至少 200px；不得固定套用 120 / 160。
+5. 表头和表体都应单行；列数 ≥ 6、同时存在长文本列 + 日期 / 时间列 + 操作列、或操作列含 3-4 字文案时，必须检查列宽总和是否超过表格卡片可用宽度。仅当列宽总和超过容器，或已出现表头换行、末列操作贴边 / 溢出、内容被裁切时，才设置 `scroll={{ x: ... }}`；启用 `scroll.x` 后，操作列建议 `fixed: 'right'`。不要为了避免滚动而压缩列宽或裁切操作链接。
 
 
 ### 标签使用规范
@@ -183,9 +184,12 @@
 - **不可操作状态**：按钮置灰禁用，使用 `disabled` 属性，颜色自动降为 `--color-text-quaternary`（`rgba(0,0,0,0.25)`），禁止手动设置灰色
 - **删除按钮**：默认与其他操作保持一致的链接色，**不使用红色 `danger` 属性**；仅当用户明确要求强调危险性时，才可加 `danger`
 - **禁止使用图标按钮**：操作列不添加任何图标，保持文字简洁
-- **列宽**：展示 2 个文字操作时，操作列 `width` 不小于 **160px**；单元格内容设置 `whiteSpace: 'nowrap'`，禁止换行
+- **列宽分档**：操作列宽度按实际文案设置，不得固定套用 120 / 160。2 个 2 字操作（如「编辑」「删除」）`width` 不小于 **160px**；含 3-4 字操作（如「查看报告」「重新发布」）时不小于 **180-200px**；两个 4 字操作时不小于 **200px**
+- **操作收纳**：默认最多直接展示 2 个常用操作；超过 2 个，或操作文案合计过长时，其余操作收纳进 Dropdown「更多」，避免操作列无限变宽
+- **不换行兜底**：单元格内容设置 `whiteSpace: 'nowrap'`，禁止换行；若列宽不足，优先增加操作列宽、收纳低频操作或启用表格横向滚动，禁止用 `overflow: hidden` 裁切操作链接
 - **间距**：多个操作之间仅使用 `Space size={8}` 区分，**禁止**在操作之间插入竖线分隔符 `\|`
 - **文案与对齐**：操作文案一般为 2 个字（如「编辑」「删除」「上架」「下架」）；同一单元格内多个操作须垂直居中对齐，统一使用 `Button type="link"`（含 `disabled` 态），禁止混用 `<a>` 与 `Button type="link">` 导致错位
+- **ProTable 操作列**：禁止 `valueType: 'option'` 下裸返回 Button 数组造成默认间距不可控；应自定义 `render`，用 `<Space size={8} align="center" className="table-action-cell" style={{ whiteSpace: 'nowrap' }}>` 包裹操作，并按文案设置 `width`
 
 
 ### 表格样式规范
@@ -315,7 +319,7 @@ const tableTheme = {
 操作列示例：
 
 ```tsx
-// columns 定义
+// 2 个短操作
 {
   title: '操作',
   key: 'action',
@@ -324,6 +328,20 @@ const tableTheme = {
     <Space size={8} align="center" className="table-action-cell">
       <Button type="link">编辑</Button>
       <Button type="link" disabled>删除</Button>
+    </Space>
+  ),
+},
+
+// 2 个较长操作：按文案增大宽度，列多时固定右侧
+{
+  title: '操作',
+  key: 'action',
+  width: 200,
+  fixed: 'right',
+  render: () => (
+    <Space size={8} align="center" className="table-action-cell" style={{ whiteSpace: 'nowrap' }}>
+      <Button type="link">查看报告</Button>
+      <Button type="link">创建修复</Button>
     </Space>
   ),
 },
@@ -336,7 +354,7 @@ const tableTheme = {
 | 正文颜色 | `--color-text`（`rgba(0,0,0,0.88)`） | `.ds-text-main` 工具类 |
 | 表头背景 | `--color-table-header-bg`（`#fafafa`） | ConfigProvider `components.Table.headerBg` |
 | 行悬浮背景 | `--color-table-row-hover`（`#fafafa`） | ConfigProvider `components.Table.headerHoverBg` |
-| 操作列宽 | 160px（2 个文字操作） | columns `width` |
+| 操作列宽 | 160px（2 个 2 字操作）；180-200px（含 3-4 字操作）；两个 4 字操作至少 200px | columns `width` |
 | 操作链接色 | `--color-table-action`（`#1677ff`） | `Button type="link"` 默认主题色 |
 | 操作间距 | 8px | `Space size={8}` |
 | 工具栏 / 筛选 / Tab 左右 | 24px（`var(--nav-space-6)`） | 方式 B：卡片 `padding-inline`；方式 A：容器 `padding-inline` |
@@ -619,10 +637,12 @@ import { Table, Pagination } from 'antd';
 
 - **列宽**：根据字段及值的长度定义合理列宽，保证可读性，防止布局破坏；**禁止**仅给部分列设宽、让首列无宽无限撑开
 - **首列宽度**：核心文本列（如名称）须设置 `width`（百分比如 `'32%'` 或固定像素），配合 `ellipsis: true`
-- **表格布局模式**：混合使用百分比列宽与固定像素列宽时，须设置 `tableLayout="fixed"`，避免列宽被自动算法挤压
+- **表格布局模式**：混合使用百分比列宽与固定像素列宽时，须设置 `tableLayout="fixed"`，避免列宽被自动算法挤压；`tableLayout="fixed"` 不能替代横向滚动，列宽总和超过容器时仍须设置 `scroll.x`
+- **横向滚动检查**：列数 ≥ 6、同时存在长文本列 + 日期 / 时间列 + 操作列，或操作列含 3-4 字操作时，不直接强制横向滚动，而是必须检查各列最小可读宽度总和是否超过表格卡片可用宽度。若多列均为短枚举、数字、短标识、中等日期列，且整表可在容器内完整展示，保持自然铺满，不设置 `scroll.x`
+- **横向滚动兜底**：仅当列宽总和超过容器，或已出现表头换行、末列操作贴边 / 溢出、内容被裁切时，才设置 `scroll={{ x: tableMinWidth }}`（可用估算值如 1000 / 1200 / 1300）；不要为了避免滚动而压缩列宽或裁切操作链接
 - **字段排序**：将最有利于用户识别和决策的字段信息前置
-- **操作列**：最多展示 2 个最常用操作，其余收纳进"更多"菜单；宽度不小于 160px，内容禁止换行
-- **固定列**：列数量较多时固定前后列，横向滚动查看；首列放区分行最核心字段，尾列放操作列
+- **操作列**：最多展示 2 个最常用操作，其余收纳进"更多"菜单；宽度按文案分档设置，内容禁止换行
+- **固定列**：仅在启用 `scroll.x` 后建议固定前后列；首列放区分行最核心字段，可 `fixed: 'left'`，尾列操作列建议 `fixed: 'right'`。未启用横向滚动时，不默认设置固定列，避免产生不必要的阴影、层级和对齐副作用
 
 
 ## 与页面整体布局的协调要求

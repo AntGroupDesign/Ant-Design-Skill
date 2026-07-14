@@ -4,7 +4,7 @@ import {
   ProFormDatePicker,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Space } from 'antd';
 import React, { useState } from 'react';
 
 import '../../references/global-style.css';
@@ -78,28 +78,17 @@ const columns: ProColumns<TableListItem>[] = [
   {
     title: '操作',
     key: 'option',
-    width: 120,
-    valueType: 'option',
-    render: (_, record) => [
-      record.status === 'close' && (
-        <Button type="link" key="publish">
-          发布
+    width: 200,
+    render: (_, record) => (
+      <Space size={8} align="center" className="table-action-cell" style={{ whiteSpace: 'nowrap' }}>
+        {record.status === 'close' && <Button type="link">发布</Button>}
+        {(record.status === 'running' || record.status === 'online') && <Button type="link">停用</Button>}
+        {record.status === 'error' && <Button type="link">重新发布</Button>}
+        <Button type="link" disabled={record.status === 'running'}>
+          监控
         </Button>
-      ),
-      (record.status === 'running' || record.status === 'online') && (
-        <Button type="link" key="stop">
-          停用
-        </Button>
-      ),
-      record.status === 'error' && (
-        <Button type="link" key="republish">
-          重新发布
-        </Button>
-      ),
-      <Button type="link" key="monitor" disabled={record.status === 'running'}>
-        监控
-      </Button>,
-    ],
+      </Space>
+    ),
   },
 ];
 
